@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Online Store</title>
+
+  <!-- Snipcart -->
+  <script async src="https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.js"></script>
+  <link href="https://cdn.snipcart.com/themes/v3.4.0/default/snipcart.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>My Online Store</h1>
+  <button class="snipcart-checkout">Cart 🛒</button>
+</header>
+
+<div class="product">
+  <img src="https://via.placeholder.com/200" alt="Product">
+  <h2>T-Shirt</h2>
+  <p>$10</p>
+
+  <button
+    class="snipcart-add-item"
+    data-item-id="1"
+    data-item-name="T-Shirt"
+    data-item-price="10"
+    data-item-url="/"
+    data-item-description="Nice cotton T-shirt">
+    Add to Cart
+  </button>
+</div>
+
+<div hidden id="snipcart"
+     data-api-key="NTc1NWFiYzQtYmQ0Yy00MmViLTg4MzctZDA2OTRjNmUzNzZlNjM5MDA4NTQ4OTAzNzgxNTg0">
+</div>
+
+</body>
+</html>
