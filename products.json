@@ -1,0 +1,9 @@
+[
+  {
+    "id": "shirt1",
+    "name": "T-Shirt",
+    "price": 10,
+    "description": "Nice cotton T-shirt",
+    "image": "https://via.placeholder.com/200"
+  }
+]
