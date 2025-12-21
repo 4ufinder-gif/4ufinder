@@ -44,4 +44,21 @@ button {
   border: none;
   cursor: pointer;
 }
+.footer {
+  background: #222;
+  color: white;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.footer-links a {
+  color: #ccc;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
 
