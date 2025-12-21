@@ -22,21 +22,33 @@
   <button class="snipcart-checkout">Cart 🛒</button>
 </header>
 
-<div class="product">
-  <img src="https://via.placeholder.com/200" alt="Product">
-  <h2>T-Shirt</h2>
-  <p>$10</p>
+<div id="products-container"></div>
 
-  <button
-    class="snipcart-add-item"
-    data-item-id="1"
-    data-item-name="T-Shirt"
-    data-item-price="10"
-    data-item-url="/"
-    data-item-description="Nice cotton T-shirt">
-    Add to Cart
-  </button>
-</div>
+<script>
+fetch('products.json')
+  .then(response => response.json())
+  .then(products => {
+    const container = document.getElementById('products-container');
+    products.forEach(product => {
+      container.innerHTML += `
+        <div class="product">
+          <img src="${product.image}" alt="${product.name}">
+          <h2>${product.name}</h2>
+          <p>$${product.price}</p>
+          <button class="snipcart-add-item"
+            data-item-id="${product.id}"
+            data-item-name="${product.name}"
+            data-item-price="${product.price}"
+            data-item-url="/"
+            data-item-description="${product.description}">
+            Add to Cart
+          </button>
+        </div>
+      `;
+    });
+  });
+</script>
+
 <footer class="footer">
   <p>© 2025 My Online Store. All rights reserved.</p>
 
@@ -53,6 +65,7 @@
 
 </body>
 </html>
+
 
 
 
