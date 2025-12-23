@@ -42,7 +42,34 @@ fetch('products.json')
             data-item-url="/"
             data-item-description="${product.description}">
             Add to Cart
-          </button>
+          <!DOCTYPE html>
+<html>
+<body>
+
+<h1>Products</h1>
+<div id="products"></div>
+
+<script>
+const products = [
+  { name: "T-Shirt", price: "$20" },
+  { name: "Notebook", price: "$5" }
+];
+
+const container = document.getElementById("products");
+
+products.forEach(p => {
+  container.innerHTML += `
+    <div class="product">
+      <h2>${p.name}</h2>
+      <p>Price: ${p.price}</p>
+    </div>
+  `;
+});
+</script>
+
+</body>
+</html>
+</button>
         </div>
       `;
     });
@@ -65,6 +92,7 @@ fetch('products.json')
 
 </body>
 </html>
+
 
 
 
