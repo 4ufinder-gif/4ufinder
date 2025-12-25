@@ -114,6 +114,52 @@ function deleteProduct(id) {
     .then(() => loadProducts());
 }
 </script>
+<script>
+const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // YOUR SheetDB
+const CLOUD_NAME = "dxuxsa5bg";
+const UPLOAD_PRESET = "cludes7u";
+
+// SECURITY
+if (localStorage.getItem("admin") !== "true") {
+  location.href = "admin-login.html";
+}
+
+// ADD PRODUCT
+async function addProduct() {
+  const file = document.getElementById("imageFile").files[0];
+  if (!file) return alert("Select an image");
+
+  // 1️⃣ Upload image to Cloudinary
+  let formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  let res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    { method: "POST", body: formData }
+  );
+
+  let imgData = await res.json();
+
+  // 2️⃣ Save product to Google Sheets
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      data: [{
+        id: id.value,
+        name: name.value,
+        price: price.value,
+        image: imgData.secure_url,
+        category: category.value
+      }]
+    })
+  }).then(() => {
+    alert("Product added!");
+    loadProducts();
+  });
+}
+</script>
 
 </body>
 </html>
