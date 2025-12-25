@@ -6,16 +6,15 @@
 <title>4uFinder | Online Marketplace</title>
 <style>
 :root {
-  --primary:#ff9900;
-  --dark:#131921;
-  --light:#f8f8f8;
-  --secondary:#0074cc;
-  --text-dark:#333;
+  --primary: #ff9900;
+  --dark: #131921;
+  --light: #f8f8f8;
+  --secondary: #0074cc;
+  --text-dark: #333;
 }
 
-* { box-sizing:border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
+* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 
-/* BODY */
 body { background: var(--light); }
 
 /* HEADER */
@@ -31,166 +30,63 @@ header {
 
 .logo { font-size: 28px; font-weight: bold; color: var(--primary); }
 
-.search-box {
-  flex: 1;
-  max-width: 500px;
-  margin: 10px;
-}
+.search-box { flex:1; max-width:500px; margin:10px; }
 
 .search-box input {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
+  width: 100%; padding: 10px; border-radius:5px; border:none;
 }
 
-.cart {
-  background: var(--primary);
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-}
+.cart { background: var(--primary); padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer; }
 
-/* NAV CATEGORIES */
-nav {
-  background: #fff;
-  padding: 10px 20px;
-  display: flex;
-  overflow-x: auto;
-  gap: 10px;
-  border-bottom: 1px solid #ddd;
-}
-
-nav a {
-  text-decoration: none;
-  color: var(--text-dark);
-  padding: 6px 12px;
-  border-radius: 5px;
-  white-space: nowrap;
-  transition: 0.2s;
-}
-
+/* NAV */
+nav { background: #fff; padding: 10px 20px; display: flex; overflow-x: auto; gap: 10px; border-bottom: 1px solid #ddd; }
+nav a { text-decoration: none; color: var(--text-dark); padding: 6px 12px; border-radius:5px; white-space: nowrap; transition:0.2s; }
 nav a:hover { background: var(--primary); color: #fff; }
 
-/* HERO BANNER */
-.hero {
-  margin: 20px;
-  background: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80') center/cover;
-  height: 350px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
+/* HERO */
+.hero { margin:20px; background: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80') center/cover; height:350px; display:flex; justify-content:center; align-items:center; border-radius:10px; }
+.hero h1 { background: rgba(0,0,0,0.6); color:#fff; padding:25px 40px; border-radius:10px; font-size:32px; text-align:center; }
+
+/* CAROUSEL / SLIDERS */
+.slider-container { position: relative; margin: 20px; }
+.slider-title { font-size: 22px; margin-bottom: 10px; color: var(--text-dark); }
+.slider {
+  display:flex;
+  overflow-x: auto;
+  gap: 15px;
+  padding-bottom: 10px;
+}
+.slider::-webkit-scrollbar { display:none; }
+.slider .product {
+  flex: 0 0 auto;
+  width: 200px;
 }
 
-.hero h1 {
-  background: rgba(0,0,0,0.6);
-  color: #fff;
-  padding: 25px 40px;
-  border-radius: 10px;
-  text-align: center;
-  font-size: 32px;
-}
-
-/* FEATURED PRODUCTS */
-.container {
-  padding: 20px;
-}
-
-.products {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-}
-
-.product {
-  background: #fff;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-}
-
-.product img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.product h3 {
-  margin: 10px 0;
-  font-size: 16px;
-  color: var(--text-dark);
-}
-
-.price {
-  color: green;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.product button {
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.product button:hover { background: #e68a00; }
+/* PRODUCTS GRID */
+.container { padding: 20px; }
+.products { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
+.product { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
+.product:hover { transform: translateY(-5px); box-shadow:0 5px 15px rgba(0,0,0,0.15); }
+.product img { width:100%; height:180px; object-fit:cover; border-radius:8px; }
+.product h3 { margin:10px 0; font-size:16px; color: var(--text-dark); }
+.price { color: green; font-weight:bold; margin-bottom:10px; }
+.product button { background: var(--primary); color:#fff; border:none; width:100%; padding:10px; border-radius:5px; cursor:pointer; }
+.product button:hover { background:#e68a00; }
 
 /* POPULAR CATEGORIES */
-.categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-  gap: 15px;
-  margin: 30px 20px;
-}
-
-.category-card {
-  background: #fff;
-  border-radius: 10px;
-  padding: 15px;
-  text-align: center;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-  cursor: pointer;
-}
-
+.categories { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:15px; margin:30px 20px; }
+.category-card { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition: transform 0.3s; cursor:pointer; }
 .category-card:hover { transform: translateY(-5px); }
-
-.category-card img {
-  width: 60px;
-  height: 60px;
-  margin-bottom: 10px;
-  object-fit: cover;
-  border-radius: 8px;
-}
+.category-card img { width:60px; height:60px; margin-bottom:10px; object-fit:cover; border-radius:8px; }
 
 /* FOOTER */
-footer {
-  background: var(--dark);
-  color: #ccc;
-  padding: 25px 20px;
-  text-align: center;
-}
-
-footer a { color:#fff; margin: 0 5px; text-decoration:none; }
+footer { background: var(--dark); color:#ccc; padding:25px 20px; text-align:center; }
+footer a { color:#fff; margin:0 5px; text-decoration:none; }
 footer a:hover { text-decoration: underline; }
 
 @media(max-width:768px){
-  nav { justify-content: flex-start; }
-  .hero h1 { font-size: 24px; padding: 15px 25px; }
+  nav { justify-content:flex-start; }
+  .hero h1 { font-size:24px; padding:15px 25px; }
 }
 </style>
 </head>
@@ -239,35 +135,63 @@ footer a:hover { text-decoration: underline; }
   </div>
 </section>
 
-<!-- FEATURED PRODUCTS -->
-<div class="container">
-  <h2>🔥 Featured Products</h2>
-  <div class="products">
+<!-- FEATURED PRODUCTS SLIDER -->
+<div class="slider-container">
+  <h2 class="slider-title">🔥 Featured Products</h2>
+  <div class="slider">
     <div class="product">
       <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80" alt="Smartphone Pro">
       <h3>Smartphone Pro</h3>
       <p class="price">$299</p>
       <button onclick="addToCart()">Add to Cart</button>
     </div>
-
     <div class="product">
-      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Wireless Headphones">
+      <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80" alt="Headphones">
       <h3>Wireless Headphones</h3>
       <p class="price">$59</p>
       <button onclick="addToCart()">Add to Cart</button>
     </div>
-
     <div class="product">
       <img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&fit=crop&w=400&q=80" alt="Smart Watch">
       <h3>Smart Watch</h3>
       <p class="price">$89</p>
       <button onclick="addToCart()">Add to Cart</button>
     </div>
-
     <div class="product">
       <img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&fit=crop&w=400&q=80" alt="Laptop 15">
       <h3>Laptop 15"</h3>
       <p class="price">$499</p>
+      <button onclick="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- BEST SELLERS GRID -->
+<div class="container">
+  <h2>⭐ Best Sellers</h2>
+  <div class="products">
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1512499617640-c2f9990b0a6e?auto=format&fit=crop&w=400&q=80" alt="Camera">
+      <h3>DSLR Camera</h3>
+      <p class="price">$499</p>
+      <button onclick="addToCart()">Add to Cart</button>
+    </div>
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1555529771-7a39f5f6501c?auto=format&fit=crop&w=400&q=80" alt="Shoes">
+      <h3>Running Shoes</h3>
+      <p class="price">$79</p>
+      <button onclick="addToCart()">Add to Cart</button>
+    </div>
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80" alt="Bag">
+      <h3>Leather Bag</h3>
+      <p class="price">$120</p>
+      <button onclick="addToCart()">Add to Cart</button>
+    </div>
+    <div class="product">
+      <img src="https://images.unsplash.com/photo-1590073247922-8b0ed6d5a125?auto=format&fit=crop&w=400&q=80" alt="Watch">
+      <h3>Smart Watch</h3>
+      <p class="price">$99</p>
       <button onclick="addToCart()">Add to Cart</button>
     </div>
   </div>
@@ -289,9 +213,5 @@ function addToCart() {
   document.getElementById("cartCount").innerText = cart;
 }
 </script>
-
 </body>
 </html>
-
-
-
