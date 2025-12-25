@@ -10,9 +10,7 @@
   --dark: #002f34;
   --light: #f8f8f8;
   --text-dark: #333;
-  --category-colors: #ffcc00, #29a3a3, #f79e1b, #6f42c1, #00a859, #ff6f61, #00bfff, #ff1493;
 }
-
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: var(--light); }
 
@@ -97,40 +95,31 @@ footer a:hover { text-decoration: underline; }
       <div>🛒 Cart (<span id="cartCount">0</span>)</div>
     </div>
   </div>
-  <nav>
-    <a href="#">All Categories</a>
-    <a href="#">Electronics</a>
-    <a href="#">Fashion</a>
-    <a href="#">Home</a>
-    <a href="#">Phones</a>
-    <a href="#">Computers</a>
-    <a href="#">Sports</a>
-    <a href="#">Toys</a>
+  <nav id="categoryNav">
+    <!-- Categories dynamically inserted here -->
   </nav>
 </header>
 
-<!-- HERO / TOP DEALS -->
 <section class="hero">
   <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Top Deals">
   <div class="banner">🔥 Top Deals Today!</div>
 </section>
 
-<!-- POPULAR CATEGORIES -->
-<section class="categories">
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1510552776732-43f1e00c0b9e?auto=format&fit=crop&w=60&q=80"><p>Electronics</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd8b?auto=format&fit=crop&w=60&q=80"><p>Fashion</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=60&q=80"><p>Home</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1580910051070-50f6f76847a6?auto=format&fit=crop&w=60&q=80"><p>Phones</p></div>
+<section class="categories" id="categoriesSection">
+  <!-- Category cards dynamically inserted here -->
 </section>
 
-<!-- FEATURED PRODUCTS SLIDER -->
 <div class="slider-container">
   <h2 class="slider-title">🔥 Featured Products</h2>
   <div class="slider" id="featuredSlider">
-    <div class="product"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"><h3>Smartphone Pro</h3><p class="price">$299</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&w=400&q=80"><h3>Wireless Headphones</h3><p class="price">$59</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&w=400&q=80"><h3>Smart Watch</h3><p class="price">$89</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&w=400&q=80"><h3>Laptop 15"</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
+    <!-- Featured products dynamically inserted here -->
+  </div>
+</div>
+
+<div class="container">
+  <h2>🆕 New Arrivals</h2>
+  <div class="products" id="productsGrid">
+    <!-- Products dynamically inserted here -->
   </div>
 </div>
 
@@ -140,11 +129,54 @@ footer a:hover { text-decoration: underline; }
 </footer>
 
 <script>
+// APIs from Admin Panel
+const API_PRODUCTS = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // Products
+const API_CATEGORIES = "https://sheetdb.io/api/v1/YOUR_CATEGORIES_ID"; // Categories
+const FEATURED_IDS = ["1","2","3","4"]; // Example IDs from admin panel featured products
+
 let cart = 0;
 function addToCart(){ cart++; document.getElementById("cartCount").innerText = cart; }
 
+// Load Categories
+async function loadCategories(){
+  try{
+    const res = await fetch(API_CATEGORIES);
+    const categories = await res.json();
+    const nav = document.getElementById("categoryNav");
+    const section = document.getElementById("categoriesSection");
+    nav.innerHTML = "";
+    section.innerHTML = "";
+    categories.forEach(c=>{
+      nav.innerHTML += `<a href="#">${c.name}</a>`;
+      section.innerHTML += `<div class="category-card"><img src="${c.image}" alt="${c.name}"><p>${c.name}</p></div>`;
+    });
+  }catch(err){ console.log(err); }
+}
+loadCategories();
+
+// Load Products
+async function loadProducts(){
+  try{
+    const res = await fetch(API_PRODUCTS);
+    const data = await res.json();
+    const grid = document.getElementById("productsGrid");
+    const featured = document.getElementById("featuredSlider");
+    grid.innerHTML = "";
+    featured.innerHTML = "";
+    data.forEach(p=>{
+      // Add to New Arrivals
+      grid.innerHTML += `<div class="product"><img src="${p.image}" alt="${p.name}"><h3>${p.name}</h3><p class="price">$${p.price}</p><button onclick="addToCart()">Add to Cart</button></div>`;
+      // Add to Featured if in featured IDs
+      if(FEATURED_IDS.includes(p.id)) featured.innerHTML += `<div class="product"><img src="${p.image}" alt="${p.name}"><h3>${p.name}</h3><p class="price">$${p.price}</p><button onclick="addToCart()">Add to Cart</button></div>`;
+    });
+  }catch(err){ console.log(err); }
+}
+loadProducts();
+
+// Featured Slider auto-scroll
 const slider = document.getElementById('featuredSlider');
-setInterval(() => { slider.scrollBy({ left: 220, behavior: 'smooth' }); }, 3000);
+setInterval(()=>{ slider.scrollBy({ left: 220, behavior: 'smooth' }); },3000);
+
 </script>
 </body>
 </html>
