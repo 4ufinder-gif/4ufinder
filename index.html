@@ -82,98 +82,7 @@ nav a {
   padding:20px;
   border-radius:10px;
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4uFinder | Latest Products</title>
-<style>
-body { font-family:Arial, sans-serif; background:#f3f3f3; padding:20px; }
-h2 { color:#131921; margin-bottom:15px; }
 
-/* Latest Products Grid */
-.latest-products {
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.latest-products .product {
-  width:120px; /* small thumbnail */
-  background:#fff;
-  border-radius:6px;
-  box-shadow:0 0 5px rgba(0,0,0,0.1);
-  text-align:center;
-  padding:5px;
-  font-size:12px;
-}
-
-.latest-products img {
-  width:100%;
-  height:80px;
-  object-fit:cover;
-  border-radius:4px;
-}
-
-.latest-products .price {
-  color:green;
-  font-weight:bold;
-  margin:5px 0;
-}
-
-.latest-products button {
-  width:100%;
-  padding:5px;
-  background:#ff9900;
-  border:none;
-  border-radius:4px;
-  font-size:12px;
-  cursor:pointer;
-}
-</style>
-</head>
-<body>
-
-<h2>🔥 Latest Products</h2>
-<div class="latest-products" id="latestProducts"></div>
-
-<script>
-// CONFIG
-const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // <-- Replace with your SheetDB API
-let cart = 0;
-
-// CART FUNCTION
-function addToCart() {
-  cart++;
-  alert("Added to cart! Total: " + cart);
-}
-
-// LOAD LATEST PRODUCTS
-async function loadLatestProducts() {
-  const res = await fetch(API);
-  const data = await res.json();
-  
-  // SORT BY ID DESCENDING (latest first)
-  const latest = data.sort((a,b)=> b.id - a.id).slice(0,8); // show last 8 products
-  
-  const container = document.getElementById("latestProducts");
-  container.innerHTML = "";
-  latest.forEach(p => {
-    const div = document.createElement("div");
-    div.className = "product";
-    div.innerHTML = `
-      <img src="${p.image}" alt="${p.name}">
-      <div>${p.name}</div>
-      <div class="price">$${p.price}</div>
-      <button onclick="addToCart()">Add</button>
-    `;
-    container.appendChild(div);
-  });
-}
-
-loadLatestProducts();
-</script>
 
 </body>
 </html>
@@ -332,6 +241,7 @@ fetch("https://sheetdb.io/api/v1/zq8bztk2qn6kx")
 
 </body>
 </html>
+
 
 
 
