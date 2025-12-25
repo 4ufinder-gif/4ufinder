@@ -16,69 +16,96 @@
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: var(--light); }
 
-/* HEADER */
+/* MASSIVE HEADER */
 header {
   background: var(--dark);
   color: #fff;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  flex-wrap: wrap;
+  flex-direction: column;
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
 }
 
-.header-left { display: flex; align-items: center; }
-.logo { font-size: 28px; font-weight: bold; color: var(--primary); }
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  border-bottom: 2px solid #444;
+}
+
+.logo { font-size: 36px; font-weight: bold; color: var(--primary); margin-right: 20px; }
 
 .search-container {
   flex:1;
   display: flex;
-  max-width: 600px;
-  margin: 0 15px;
+  max-width: 800px;
+  margin: 0 20px;
 }
 
 .category-select {
   border: none;
   border-radius: 4px 0 0 4px;
-  padding: 10px;
+  padding: 12px;
   background: #eee;
+  font-weight: bold;
 }
 
 .search-container input {
   flex:1;
-  padding: 10px;
+  padding: 12px;
   border: none;
   outline: none;
+  font-size: 16px;
 }
 
 .search-btn {
   background: var(--primary);
   border: none;
-  padding: 10px 15px;
+  padding: 12px 20px;
   cursor: pointer;
   border-radius: 0 4px 4px 0;
   color: #fff;
+  font-size: 16px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 15px;
-  font-size: 12px;
+  gap: 25px;
+  font-size: 14px;
   text-align: center;
 }
 
 .header-right div { cursor: pointer; }
 
-/* NAV */
-nav { background: #fff; padding: 10px 20px; display: flex; overflow-x: auto; gap: 10px; border-bottom: 1px solid #ddd; position: sticky; top:60px; z-index: 999; }
-nav a { text-decoration: none; color: var(--text-dark); padding: 6px 12px; border-radius:5px; white-space: nowrap; transition:0.2s; }
-nav a:hover { background: var(--primary); color: #fff; }
+.header-bottom {
+  display: flex;
+  gap: 15px;
+  padding: 10px 25px;
+  background: #232f3e;
+  overflow-x: auto;
+}
 
-/* HERO / TOP DEALS */
+.header-bottom a {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 12px;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+.header-bottom a:hover {
+  background: var(--primary);
+  color: #000;
+}
+
+/* NAV / HERO / PRODUCTS same as before */
+nav { display:none; } /* removed old nav */
+
 .hero { margin:20px; position: relative; }
 .hero img { width:100%; height:350px; object-fit:cover; border-radius:10px; }
 .hero .banner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background: rgba(0,0,0,0.6); padding:30px 50px; border-radius:10px; color:#fff; font-size:32px; text-align:center; }
@@ -86,13 +113,7 @@ nav a:hover { background: var(--primary); color: #fff; }
 /* SLIDERS */
 .slider-container { margin: 20px; }
 .slider-title { font-size: 22px; margin-bottom: 10px; color: var(--text-dark); }
-.slider {
-  display:flex;
-  overflow-x:auto;
-  gap: 15px;
-  padding-bottom: 10px;
-  scroll-behavior: smooth;
-}
+.slider { display:flex; overflow-x:auto; gap: 15px; padding-bottom: 10px; scroll-behavior: smooth; }
 .slider::-webkit-scrollbar { display:none; }
 .slider .product { flex:0 0 auto; width:200px; }
 
@@ -119,59 +140,59 @@ footer a { color:#fff; margin:0 5px; text-decoration:none; }
 footer a:hover { text-decoration: underline; }
 
 @media(max-width:768px){
-  nav { justify-content:flex-start; }
-  .hero .banner { font-size:24px; padding:20px 30px; }
-  .search-container { flex-direction: column; }
-  .category-select, .search-container input, .search-btn { width: 100%; margin: 2px 0; border-radius:5px; }
-  .header-right { flex-direction: column; font-size: 14px; }
+  .search-container { flex-direction: column; max-width: 100%; }
+  .category-select, .search-container input, .search-btn { width: 100%; margin: 3px 0; border-radius:5px; }
+  .header-right { flex-direction: column; font-size: 14px; gap: 10px; }
+  .header-bottom { flex-wrap: wrap; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-left">
+  <div class="header-top">
     <div class="logo">4uFinder</div>
+    <div class="search-container">
+      <select class="category-select">
+        <option>All</option>
+        <option>Electronics</option>
+        <option>Fashion</option>
+        <option>Home</option>
+        <option>Phones</option>
+        <option>Computers</option>
+        <option>Sports</option>
+        <option>Toys</option>
+      </select>
+      <input type="text" placeholder="Search for products, brands and categories">
+      <button class="search-btn">🔍</button>
+    </div>
+    <div class="header-right">
+      <div class="account">
+        <span>Hello, Sign in</span><br>
+        <strong>Account & Lists</strong>
+      </div>
+      <div class="orders">
+        <span>Returns</span><br>
+        <strong>& Orders</strong>
+      </div>
+      <div class="cart">🛒 Cart (<span id="cartCount">0</span>)</div>
+    </div>
   </div>
 
-  <div class="search-container">
-    <select class="category-select">
-      <option>All</option>
-      <option>Electronics</option>
-      <option>Fashion</option>
-      <option>Home</option>
-      <option>Phones</option>
-      <option>Computers</option>
-      <option>Sports</option>
-      <option>Toys</option>
-    </select>
-    <input type="text" placeholder="Search for products, brands and categories">
-    <button class="search-btn">🔍</button>
-  </div>
-
-  <div class="header-right">
-    <div class="account">
-      <span>Hello, Sign in</span><br>
-      <strong>Account & Lists</strong>
-    </div>
-    <div class="orders">
-      <span>Returns</span><br>
-      <strong>& Orders</strong>
-    </div>
-    <div class="cart">🛒 Cart (<span id="cartCount">0</span>)</div>
+  <div class="header-bottom">
+    <a href="#">All Categories</a>
+    <a href="#">Electronics</a>
+    <a href="#">Fashion</a>
+    <a href="#">Home</a>
+    <a href="#">Phones</a>
+    <a href="#">Computers</a>
+    <a href="#">Sports</a>
+    <a href="#">Toys</a>
+    <a href="#">Deals</a>
+    <a href="#">New Arrivals</a>
+    <a href="#">Best Sellers</a>
   </div>
 </header>
-
-<nav>
-  <a href="#">All Categories</a>
-  <a href="#">Electronics</a>
-  <a href="#">Fashion</a>
-  <a href="#">Home</a>
-  <a href="#">Phones</a>
-  <a href="#">Computers</a>
-  <a href="#">Sports</a>
-  <a href="#">Toys</a>
-</nav>
 
 <!-- HERO / TOP DEALS -->
 <section class="hero">
