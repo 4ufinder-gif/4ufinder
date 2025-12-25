@@ -83,9 +83,6 @@ nav a {
   border-radius:10px;
 }
 
-
-</body>
-</html>
 /* PRODUCTS */
 .container {
   padding:20px;
@@ -131,6 +128,38 @@ nav a {
   cursor:pointer;
 }
 
+/* SLIDERS */
+.slider-section {
+  padding:20px;
+}
+
+.slider-title {
+  margin-bottom:10px;
+}
+
+.slider {
+  display:flex;
+  overflow-x:auto;
+  gap:15px;
+  padding-bottom:10px;
+}
+
+.slider::-webkit-scrollbar {
+  display:none;
+}
+
+.slider .product-small {
+  flex:0 0 auto;
+  width:120px;
+}
+
+.slider .product-small img {
+  width:100%;
+  height:100px;
+  object-fit:cover;
+  border-radius:6px;
+}
+
 /* FOOTER */
 footer {
   background:#131921;
@@ -168,9 +197,10 @@ footer a { color:#fff; text-decoration:none; }
   <h1>Find Everything You Need on 4uFinder</h1>
 </section>
 
+<div class="container">
+
   <h2>🔥 Featured Products</h2>
   <br>
-  
   <div class="products">
     <div class="product">
       <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
@@ -200,6 +230,53 @@ footer a { color:#fff; text-decoration:none; }
       <button onclick="addToCart()">Add to Cart</button>
     </div>
   </div>
+
+  <!-- Latest Products Slider -->
+  <div class="slider-section">
+    <h2 class="slider-title">🆕 Latest Products</h2>
+    <div class="slider" id="latestProducts">
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product 1">
+        <p>Product 1</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product 2">
+        <p>Product 2</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product 3">
+        <p>Product 3</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product 4">
+        <p>Product 4</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Last Viewed Products Slider -->
+  <div class="slider-section">
+    <h2 class="slider-title">👀 Last Viewed Products</h2>
+    <div class="slider" id="lastViewedProducts">
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product A">
+        <p>Product A</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product B">
+        <p>Product B</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product C">
+        <p>Product C</p>
+      </div>
+      <div class="product-small">
+        <img src="https://via.placeholder.com/120x100" alt="Product D">
+        <p>Product D</p>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <footer>
@@ -216,30 +293,26 @@ let cart = 0;
 function addToCart() {
   cart++;
   document.getElementById("cartCount").innerText = cart;
-<div class="products" id="products"></div>
+}
 
-<script>
-fetch("https://sheetdb.io/api/v1/zq8bztk2qn6kx")
-.then(res => res.json())
-.then(data => {
-  let html = "";
-  data.forEach(p => {
-    html += `
-    <div class="product">
-      <img src="${p.image}">
-      <h3>${p.name}</h3>
-      <p>$${p.price}</p>
-      <button>Add to Cart</button>
-    </div>`;
-  });
-  document.getElementById("products").innerHTML = html;
-});
-</script>
-
+// Optional: simple auto-scroll for sliders
+function autoScrollSlider(id, speed=2500) {
+  const slider = document.getElementById(id);
+  let scroll = 0;
+  setInterval(() => {
+    scroll += 130; // width of small product
+    if(scroll >= slider.scrollWidth - slider.clientWidth) scroll = 0;
+    slider.scrollTo({ left: scroll, behavior: 'smooth' });
+  }, speed);
+}
+autoScrollSlider('latestProducts');
+autoScrollSlider('lastViewedProducts');
 </script>
 
 </body>
 </html>
+
+
 
 
 
