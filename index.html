@@ -123,10 +123,15 @@ footer a:hover { text-decoration: underline; }
 <div class="slider-container">
   <h2 class="slider-title">🔥 Featured Products</h2>
   <div class="slider" id="featuredSlider">
-    <div class="product"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"><h3>Smartphone Pro</h3><p class="price">$299</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"><h3>Wireless Headphones</h3><p class="price">$59</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&fit=crop&w=400&q=80"><h3>Smart Watch</h3><p class="price">$89</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&fit=crop&w=400&q=80"><h3>Laptop 15"</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
+    <!-- 30 products -->
+    <!-- You can replace images and titles with your own -->
+    ${Array.from({length:30}).map((_,i)=>`
+      <div class="product">
+        <img src="https://picsum.photos/400/180?random=${i+1}" alt="Product ${i+1}">
+        <h3>Product ${i+1}</h3>
+        <p class="price">$${Math.floor(Math.random()*500 + 50)}</p>
+        <button onclick="addToCart()">Add to Cart</button>
+      </div>`).join('')}
   </div>
 </div>
 
@@ -159,4 +164,3 @@ setInterval(() => {
 </script>
 </body>
 </html>
-
