@@ -1,45 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>4uFinder Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body { font-family:Arial; padding:20px; background:#f4f4f4; }
-input, button, select { padding:10px; margin:5px 0; width:100%; }
-.card { background:#fff; padding:15px; margin:10px 0; border-radius:6px; }
-button { background:#ff9900; border:none; cursor:pointer; }
-.del { background:red; color:white; }
-</style>
+  <title>4uFinder Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family:Arial; margin:0; background:#f4f4f4; }
+    header { background:#131921; color:white; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; }
+    header h1 { margin:0; font-size:22px; }
+    nav { background:#222; display:flex; flex-wrap:wrap; gap:10px; padding:10px; }
+    nav button { padding:10px; background:#ff9900; border:none; cursor:pointer; color:#fff; border-radius:4px; }
+    section { padding:20px; display:none; }
+    section.active { display:block; }
+    input, select, button { padding:10px; margin:5px 0; width:100%; border-radius:4px; }
+    .card { background:#fff; padding:15px; margin:10px 0; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    .del { background:red; color:white; }
+    h2 { margin-top:0; }
+    hr { margin:20px 0; }
+  </style>
 </head>
-
 <body>
 
-<h1>4uFinder Admin Dashboard</h1>
-<p>Welcome Admin 👋</p>
-<button onclick="logout()">Logout</button>
+<header>
+  <h1>4uFinder Admin Panel</h1>
+  <button onclick="logout()">Logout</button>
+</header>
 
-<hr>
-<h2>🛠 Products</h2>
+<nav>
+  <button onclick="showSection('dashboard')">Dashboard</button>
+  <button onclick="showSection('websiteSettings')">Website Settings</button>
+  <button onclick="showSection('shopSettings')">Shop Settings</button>
+  <button onclick="showSection('productsSection')">Product Management</button>
+  <button onclick="showSection('ordersSection')">Order Management</button>
+  <button onclick="showSection('slidersSection')">Manage Sliders</button>
+  <button onclick="showSection('servicesSection')">Services</button>
+  <button onclick="showSection('customersSection')">Registered Customers</button>
+</nav>
 
-<!-- ADD / UPDATE PRODUCT -->
-<input id="id" placeholder="Product ID">
-<input id="name" placeholder="Product Name">
-<input id="price" placeholder="Price">
-<input type="file" id="imageFile" accept="image/*">
-<input id="category" placeholder="Category">
-<button onclick="addProduct()">➕ Add / Update Product</button>
+<!-- DASHBOARD -->
+<section id="dashboard" class="active">
+  <h2>📊 Admin Dashboard</h2>
+  <p>Welcome Admin 👋</p>
+  <p>Overview stats and quick links here.</p>
+</section>
 
-<hr>
-<h3>📦 All Products</h3>
-<div id="products"></div>
+<!-- WEBSITE SETTINGS -->
+<section id="websiteSettings">
+  <h2>🌐 Website Settings</h2>
+  <input placeholder="Website Name">
+  <input placeholder="Logo URL">
+  <input placeholder="Contact Email">
+  <button>Save Settings</button>
+</section>
 
-<hr>
-<h2>⭐ Featured Products</h2>
-<select id="featuredSelect">
-  <option value="">-- Select Product --</option>
-</select>
-<button onclick="addFeatured()">➕ Add to Featured</button>
-<div id="featuredProducts"></div>
+<!-- SHOP SETTINGS -->
+<section id="shopSettings">
+  <h2>🏪 Shop Settings</h2>
+  <input placeholder="Currency">
+  <input placeholder="Tax Rate">
+  <input placeholder="Shipping Options">
+  <button>Save Shop Settings</button>
+</section>
+
+<!-- PRODUCT MANAGEMENT -->
+<section id="productsSection">
+  <h2>🛠 Product Management</h2>
+  <input id="id" placeholder="Product ID">
+  <input id="name" placeholder="Product Name">
+  <input id="price" placeholder="Price">
+  <input type="file" id="imageFile" accept="image/*">
+  <input id="category" placeholder="Category">
+  <button onclick="addProduct()">➕ Add / Update Product</button>
+
+  <hr>
+  <h3>📦 All Products</h3>
+  <div id="products"></div>
+
+  <hr>
+  <h3>⭐ Featured Products</h3>
+  <select id="featuredSelect"><option value="">-- Select Product --</option></select>
+  <button onclick="addFeatured()">➕ Add to Featured</button>
+  <div id="featuredProducts"></div>
+</section>
+
+<!-- ORDER MANAGEMENT -->
+<section id="ordersSection">
+  <h2>🧾 Order Management</h2>
+  <p>List and manage customer orders here.</p>
+</section>
+
+<!-- MANAGE SLIDERS -->
+<section id="slidersSection">
+  <h2>🎞 Manage Sliders</h2>
+  <input placeholder="Slider Image URL">
+  <input placeholder="Slider Title">
+  <button>Add Slider</button>
+  <div id="sliderList"></div>
+</section>
+
+<!-- SERVICES -->
+<section id="servicesSection">
+  <h2>🛎 Services</h2>
+  <input placeholder="Service Name">
+  <input placeholder="Service Description">
+  <button>Add Service</button>
+  <div id="serviceList"></div>
+</section>
+
+<!-- REGISTERED CUSTOMERS -->
+<section id="customersSection">
+  <h2>👥 Registered Customers</h2>
+  <div id="customersList"></div>
+</section>
 
 <script>
 const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // CHANGE TO YOUR SheetDB
@@ -47,105 +118,82 @@ const CLOUD_NAME = "dxuxsa5bg";
 const UPLOAD_PRESET = "cludes7u";
 
 // SECURITY
-if (localStorage.getItem("admin") !== "true") {
-  location.href = "admin-login.html";
-}
+if(localStorage.getItem("admin") !== "true") location.href="admin-login.html";
 
-// LOGOUT
 function logout() {
   localStorage.removeItem("admin");
-  window.location.href = "admin-login.html";
+  window.location.href="admin-login.html";
+}
+
+function showSection(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
 // ---------------- PRODUCTS ----------------
+let featuredProducts = [];
+
 async function loadProducts() {
   const res = await fetch(API);
   const data = await res.json();
   let html = "";
   const select = document.getElementById("featuredSelect");
   select.innerHTML = `<option value="">-- Select Product --</option>`;
-  data.forEach(p => {
-    html += `
-      <div class="card">
-        <b>${p.name}</b> ($${p.price})<br>
-        ${p.category}<br>
-        <button class="del" onclick="deleteProduct('${p.id}')">Delete</button>
-      </div>
-    `;
-    select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+  data.forEach(p=>{
+    html+=`<div class="card"><b>${p.name}</b> ($${p.price})<br>${p.category}<br><button class="del" onclick="deleteProduct('${p.id}')">Delete</button></div>`;
+    select.innerHTML+=`<option value="${p.id}">${p.name}</option>`;
   });
-  document.getElementById("products").innerHTML = html;
+  document.getElementById("products").innerHTML=html;
 }
 loadProducts();
 
 async function addProduct() {
-  const file = document.getElementById("imageFile").files[0];
-  if (!file) return alert("Select an image");
-
-  let formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", UPLOAD_PRESET);
-
-  let res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
-  let imgData = await res.json();
-
-  await fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data: [{ 
-      id: id.value, 
-      name: name.value, 
-      price: price.value, 
-      image: imgData.secure_url, 
-      category: category.value 
-    }]})
+  const file=document.getElementById("imageFile").files[0];
+  if(!file)return alert("Select an image");
+  let formData=new FormData();
+  formData.append("file",file);
+  formData.append("upload_preset",UPLOAD_PRESET);
+  let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
+  let imgData=await res.json();
+  await fetch(API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({data:[{id:id.value,name:name.value,price:price.value,image:imgData.secure_url,category:category.value}]})
   });
-
   alert("Product added!");
   loadProducts();
 }
 
-function deleteProduct(id) {
-  fetch(`${API}/id/${id}`, { method: "DELETE" })
-    .then(() => loadProducts());
+function deleteProduct(id){
+  fetch(`${API}/id/${id}`,{method:"DELETE"}).then(()=>loadProducts());
 }
 
 // ---------------- FEATURED ----------------
-let featuredProducts = [];
-
-function addFeatured() {
-  const selectedID = document.getElementById("featuredSelect").value;
-  if (!selectedID) return alert("Select a product first");
-  if (!featuredProducts.includes(selectedID)) {
-    featuredProducts.push(selectedID);
-  } else {
-    return alert("Product is already featured");
-  }
+function addFeatured(){
+  const selectedID=document.getElementById("featuredSelect").value;
+  if(!selectedID)return alert("Select a product first");
+  if(!featuredProducts.includes(selectedID)) featuredProducts.push(selectedID);
+  else return alert("Product is already featured");
   renderFeatured();
 }
 
-function removeFeatured(id) {
-  featuredProducts = featuredProducts.filter(f => f !== id);
+function removeFeatured(id){
+  featuredProducts=featuredProducts.filter(f=>f!==id);
   renderFeatured();
 }
 
-async function renderFeatured() {
-  let html = "";
-  const res = await fetch(API);
-  const data = await res.json();
-  featuredProducts.forEach(f => {
-    const p = data.find(prod => prod.id === f);
-    if (p) {
-      html += `<div class="card">
-        <b>${p.name}</b> ($${p.price})<br>
-        ${p.category}<br>
-        <button class="del" onclick="removeFeatured('${p.id}')">Remove</button>
-      </div>`;
-    }
+async function renderFeatured(){
+  let html="";
+  const res=await fetch(API);
+  const data=await res.json();
+  featuredProducts.forEach(f=>{
+    const p=data.find(prod=>prod.id===f);
+    if(p) html+=`<div class="card"><b>${p.name}</b> ($${p.price})<br>${p.category}<br><button class="del" onclick="removeFeatured('${p.id}')">Remove</button></div>`;
   });
-  document.getElementById("featuredProducts").innerHTML = html;
+  document.getElementById("featuredProducts").innerHTML=html;
 }
 </script>
 
 </body>
+</html>
 </html>
