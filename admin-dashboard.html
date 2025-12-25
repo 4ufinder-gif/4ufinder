@@ -29,3 +29,93 @@ function logout() {
 
 </body>
 </html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>4uFinder Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family:Arial; padding:20px; background:#f4f4f4; }
+input, button { padding:10px; margin:5px 0; width:100%; }
+.card { background:#fff; padding:15px; margin:10px 0; border-radius:6px; }
+button { background:#ff9900; border:none; cursor:pointer; }
+.del { background:red; color:white; }
+</style>
+</head>
+
+<body>
+
+<h2>🛠 4uFinder Admin – Products</h2>
+
+<!-- ADD PRODUCT -->
+<input id="id" placeholder="Product ID">
+<input id="name" placeholder="Product Name">
+<input id="price" placeholder="Price">
+<input id="image" placeholder="Image URL">
+<input id="category" placeholder="Category">
+<button onclick="addProduct()">➕ Add / Update Product</button>
+
+<hr>
+
+<h3>📦 Products</h3>
+<div id="products"></div>
+
+<script>
+const API = "https://sheetdb.io/api/v1/xyz123"; // CHANGE THIS
+
+// PROTECT PAGE
+if (localStorage.getItem("admin") !== "true") {
+  location.href = "admin-login.html";
+}
+
+// LOAD PRODUCTS
+function loadProducts() {
+  fetch(API)
+    .then(res => res.json())
+    .then(data => {
+      let html = "";
+      data.forEach(p => {
+        html += `
+          <div class="card">
+            <b>${p.name}</b> ($${p.price})<br>
+            ${p.category}<br>
+            <button class="del" onclick="deleteProduct('${p.id}')">Delete</button>
+          </div>
+        `;
+      });
+      document.getElementById("products").innerHTML = html;
+    });
+}
+loadProducts();
+
+// ADD / UPDATE PRODUCT
+function addProduct() {
+  fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      data: [{
+        id: id.value,
+        name: name.value,
+        price: price.value,
+        image: image.value,
+        category: category.value
+      }]
+    })
+  }).then(() => {
+    alert("Product saved");
+    loadProducts();
+  });
+}
+
+// DELETE PRODUCT
+function deleteProduct(id) {
+  fetch(`${API}/id/${id}`, { method: "DELETE" })
+    .then(() => loadProducts());
+}
+</script>
+
+</body>
+</html>
+
+
