@@ -10,6 +10,7 @@
   --dark: #002f34;
   --light: #f8f8f8;
   --text-dark: #333;
+  --category-colors: #ffcc00, #29a3a3, #f79e1b, #6f42c1, #00a859, #ff6f61, #00bfff, #ff1493;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
@@ -26,9 +27,17 @@ header { position: sticky; top:0; z-index:1000; width: 100%; background:#fff; bo
 .header-right div { cursor:pointer; }
 
 /* NAVIGATION BAR BELOW HEADER */
-nav { display:flex; gap:10px; overflow-x:auto; padding:8px 20px; background:#f2f2f2; border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
-nav a { text-decoration:none; color: var(--text-dark); padding:6px 12px; white-space:nowrap; border-radius:4px; transition:0.2s; }
-nav a:hover { background: var(--primary); color:#fff; }
+nav { display:flex; gap:10px; overflow-x:auto; padding:8px 20px; background:#f8f8f8; border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
+nav a { text-decoration:none; color:#fff; padding:8px 14px; white-space:nowrap; border-radius:4px; transition:0.2s; font-weight:bold; }
+nav a:nth-child(1){ background:#ffcc00; color:#000; }
+nav a:nth-child(2){ background:#29a3a3; }
+nav a:nth-child(3){ background:#f79e1b; }
+nav a:nth-child(4){ background:#6f42c1; }
+nav a:nth-child(5){ background:#00a859; }
+nav a:nth-child(6){ background:#ff6f61; }
+nav a:nth-child(7){ background:#00bfff; }
+nav a:nth-child(8){ background:#ff1493; }
+nav a:hover { filter: brightness(1.2); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
 /* HERO / TOP DEALS */
 .hero { margin:20px; position: relative; }
@@ -97,9 +106,6 @@ footer a:hover { text-decoration: underline; }
     <a href="#">Computers</a>
     <a href="#">Sports</a>
     <a href="#">Toys</a>
-    <a href="#">Deals</a>
-    <a href="#">New Arrivals</a>
-    <a href="#">Best Sellers</a>
   </nav>
 </header>
 
@@ -122,20 +128,9 @@ footer a:hover { text-decoration: underline; }
   <h2 class="slider-title">🔥 Featured Products</h2>
   <div class="slider" id="featuredSlider">
     <div class="product"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"><h3>Smartphone Pro</h3><p class="price">$299</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"><h3>Wireless Headphones</h3><p class="price">$59</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&fit=crop&w=400&q=80"><h3>Smart Watch</h3><p class="price">$89</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&fit=crop&w=400&q=80"><h3>Laptop 15"</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
-  </div>
-</div>
-
-<!-- NEW ARRIVALS GRID -->
-<div class="container">
-  <h2>🆕 New Arrivals</h2>
-  <div class="products">
-    <div class="product"><img src="https://images.unsplash.com/photo-1555529771-7a39f5f6501c?auto=format&fit=crop&w=400&q=80"><h3>Running Shoes</h3><p class="price">$79</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&w=400&q=80"><h3>Leather Bag</h3><p class="price">$120</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1590073247922-8b0ed6d5a125?auto=format&w=400&q=80"><h3>Smart Watch</h3><p class="price">$99</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1512499617640-c2f9990b0a6e?auto=format&w=400&q=80"><h3>DSLR Camera</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&w=400&q=80"><h3>Wireless Headphones</h3><p class="price">$59</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&w=400&q=80"><h3>Smart Watch</h3><p class="price">$89</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&w=400&q=80"><h3>Laptop 15"</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
   </div>
 </div>
 
