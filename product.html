@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product | 4uFinder</title>
+<style>
+body{font-family:Arial;background:#f8f8f8;margin:0}
+header{background:#fff;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+.container{padding:20px;max-width:1000px;margin:auto}
+.product{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+  background:#fff;
+  padding:20px;
+  border-radius:10px
+}
+.product img{
+  width:100%;
+  border-radius:10px
+}
+.price{font-size:24px;color:green;margin:15px 0}
+button{
+  background:#e53238;
+  color:#fff;
+  border:none;
+  padding:12px 20px;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:5px
+}
+@media(max-width:768px){
+  .product{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <strong style="color:#e53238">4uFinder</strong>
+</header>
+
+<div class="container">
+  <div class="product">
+    <img id="pImg">
+    <div>
+      <h2 id="pName"></h2>
+      <p class="price" id="pPrice"></p>
+      <p id="pDesc"></p>
+      <button>Add to Cart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const products = {
+  1:{
+    name:"Smartphone Pro",
+    price:"$299",
+    img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
+    desc:"High-quality smartphone with powerful performance."
+  },
+  2:{
+    name:"Wireless Headphones",
+    price:"$59",
+    img:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+    desc:"Noise cancelling wireless headphones."
+  }
+};
+
+const id = new URLSearchParams(window.location.search).get("id");
+const p = products[id];
+
+document.getElementById("pImg").src = p.img;
+document.getElementById("pName").innerText = p.name;
+document.getElementById("pPrice").innerText = p.price;
+document.getElementById("pDesc").innerText = p.desc;
+</script>
+
+</body>
+</html>
