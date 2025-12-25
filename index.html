@@ -167,6 +167,42 @@ footer a { color:#fff; text-decoration:none; }
 <section class="hero">
   <h1>Find Everything You Need on 4uFinder</h1>
 </section>
+<h2>🔥 Latest Products</h2>
+<div class="latest-products" id="latestProducts"></div>
+
+<script>
+// CONFIG
+const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // <-- Replace with your SheetDB API
+let cart = 0;
+
+// CART FUNCTION
+function addToCart() {
+  cart++;
+  alert("Added to cart! Total: " + cart);
+}
+
+// LOAD LATEST PRODUCTS
+async function loadLatestProducts() {
+  const res = await fetch(API);
+  const data = await res.json();
+  
+  // SORT BY ID DESCENDING (latest first)
+  const latest = data.sort((a,b)=> b.id - a.id).slice(0,8); // show last 8 products
+  
+  const container = document.getElementById("latestProducts");
+  container.innerHTML = "";
+  latest.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product";
+    div.innerHTML = `
+      <img src="${p.image}" alt="${p.name}">
+      <div>${p.name}</div>
+      <div class="price">$${p.price}</div>
+      <button onclick="addToCart()">Add</button>
+    `;
+    container.appendChild(div);
+  });
+}
 
 <div class="container">
   <h2>🔥 Featured Products</h2>
@@ -241,6 +277,7 @@ fetch("https://sheetdb.io/api/v1/zq8bztk2qn6kx")
 
 </body>
 </html>
+
 
 
 
