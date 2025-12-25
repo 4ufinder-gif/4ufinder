@@ -85,7 +85,7 @@
 <!-- ORDER MANAGEMENT -->
 <section id="ordersSection">
   <h2>🧾 Order Management</h2>
-  <p>List and manage customer orders here.</p>
+  <div id="ordersList"></div>
 </section>
 
 <!-- MANAGE SLIDERS -->
@@ -113,7 +113,9 @@
 </section>
 
 <script>
-const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // CHANGE TO YOUR SheetDB
+const API_PRODUCTS = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // Products SheetDB
+const API_ORDERS = "https://sheetdb.io/api/v1/YOUR_ORDERS_ID";   // Orders SheetDB
+const API_CUSTOMERS = "https://sheetdb.io/api/v1/YOUR_CUSTOMERS_ID"; // Customers SheetDB
 const CLOUD_NAME = "dxuxsa5bg";
 const UPLOAD_PRESET = "cludes7u";
 
@@ -134,7 +136,7 @@ function showSection(id){
 let featuredProducts = [];
 
 async function loadProducts() {
-  const res = await fetch(API);
+  const res = await fetch(API_PRODUCTS);
   const data = await res.json();
   let html = "";
   const select = document.getElementById("featuredSelect");
@@ -155,7 +157,7 @@ async function addProduct() {
   formData.append("upload_preset",UPLOAD_PRESET);
   let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
   let imgData=await res.json();
-  await fetch(API,{
+  await fetch(API_PRODUCTS,{
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({data:[{id:id.value,name:name.value,price:price.value,image:imgData.secure_url,category:category.value}]})
@@ -165,7 +167,7 @@ async function addProduct() {
 }
 
 function deleteProduct(id){
-  fetch(`${API}/id/${id}`,{method:"DELETE"}).then(()=>loadProducts());
+  fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>loadProducts());
 }
 
 // ---------------- FEATURED ----------------
@@ -184,7 +186,7 @@ function removeFeatured(id){
 
 async function renderFeatured(){
   let html="";
-  const res=await fetch(API);
+  const res=await fetch(API_PRODUCTS);
   const data=await res.json();
   featuredProducts.forEach(f=>{
     const p=data.find(prod=>prod.id===f);
@@ -192,8 +194,41 @@ async function renderFeatured(){
   });
   document.getElementById("featuredProducts").innerHTML=html;
 }
+
+// ---------------- ORDERS ----------------
+async function loadOrders() {
+  const res = await fetch(API_ORDERS);
+  const orders = await res.json();
+  let html = "";
+  orders.forEach(o => {
+    html += `<div class="card">
+      <b>Order ID:</b> ${o.id}<br>
+      <b>Customer:</b> ${o.customerName} (${o.customerEmail})<br>
+      <b>Products:</b> ${o.products}<br>
+      <b>Total:</b> $${o.total}<br>
+      <b>Status:</b> ${o.status}<br>
+    </div>`;
+  });
+  document.getElementById("ordersList").innerHTML = html;
+}
+loadOrders();
+
+// ---------------- CUSTOMERS ----------------
+async function loadCustomers() {
+  const res = await fetch(API_CUSTOMERS);
+  const customers = await res.json();
+  let html = "";
+  customers.forEach(c => {
+    html += `<div class="card">
+      <b>${c.name}</b> (${c.email})<br>
+      Registered: ${c.registeredDate || 'N/A'}
+    </div>`;
+  });
+  document.getElementById("customersList").innerHTML = html;
+}
+loadCustomers();
+
 </script>
 
 </body>
-</html>
 </html>
