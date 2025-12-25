@@ -1,53 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Admin Dashboard</title>
+<meta charset="UTF-8">
+<title>4uFinder Admin Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-body { font-family:Arial; padding:20px; }
-button { padding:10px; background:#ff9900; border:none; }
+body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+h1,h2,h3 { margin-bottom: 15px; }
+input, button, textarea { padding: 10px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+.card { background: #fff; padding: 15px; margin: 10px 0; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+button { background: #ff9900; border: none; cursor: pointer; color: #fff; }
+button:hover { background: #e68a00; }
+.del { background: red; }
+@media (max-width:768px){ input, button, textarea { width: 100%; } }
+hr { margin: 20px 0; border: 1px solid #ddd; }
 </style>
 </head>
-
 <body>
 
 <h1>4uFinder Admin Dashboard</h1>
 <p>Welcome Admin 👋</p>
-
 <button onclick="logout()">Logout</button>
 
-<script>
-if (localStorage.getItem("admin") !== "true") {
-  window.location.href = "admin-login.html";
-}
+<hr>
 
-function logout() {
-  localStorage.removeItem("admin");
-  window.location.href = "admin-login.html";
-}
-</script>
-
-</body>
-</html>
-<!DOCTYPE html>
-<html>
-<head>
-<title>4uFinder Admin</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-body { font-family:Arial; padding:20px; background:#f4f4f4; }
-input, button { padding:10px; margin:5px 0; width:100%; }
-.card { background:#fff; padding:15px; margin:10px 0; border-radius:6px; }
-button { background:#ff9900; border:none; cursor:pointer; }
-.del { background:red; color:white; }
-</style>
-</head>
-
-<body>
-
-<h2>🛠 4uFinder Admin – Products</h2>
-
-<!-- ADD PRODUCT -->
+<h2>🛠 Manage Products</h2>
 <input id="id" placeholder="Product ID">
 <input id="name" placeholder="Product Name">
 <input id="price" placeholder="Price">
@@ -55,68 +32,39 @@ button { background:#ff9900; border:none; cursor:pointer; }
 <input id="category" placeholder="Category">
 <button onclick="addProduct()">➕ Add / Update Product</button>
 
-<hr>
-
-<h3>📦 Products</h3>
 <div id="products"></div>
 
+<hr>
+
+<h2>📂 Manage Categories</h2>
+<input id="categoryName" placeholder="Category Name">
+<button onclick="addCategory()">➕ Add Category</button>
+<div id="categories"></div>
+
+<hr>
+
+<h2>🖼 Hero / Banner Section</h2>
+<input type="file" id="heroImage" accept="image/*">
+<input id="heroText" placeholder="Banner Text">
+<button onclick="updateHero()">Update Hero Section</button>
+
+<hr>
+
+<h2>⭐ Featured Products</h2>
+<input id="featuredProductID" placeholder="Product ID to feature">
+<button onclick="addFeatured()">Add to Featured</button>
+<div id="featuredProducts"></div>
+
+<hr>
+
+<h2>📜 Footer & Site Info</h2>
+<input id="footerText" placeholder="Footer Text">
+<input id="footerLinks" placeholder="Footer Links (comma separated)">
+<button onclick="updateFooter()">Update Footer</button>
+
 <script>
-const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // CHANGE THIS
-
-// PROTECT PAGE
-if (localStorage.getItem("admin") !== "true") {
-  location.href = "admin-login.html";
-}
-
-// LOAD PRODUCTS
-function loadProducts() {
-  fetch(API)
-    .then(res => res.json())
-    .then(data => {
-      let html = "";
-      data.forEach(p => {
-        html += `
-          <div class="card">
-            <b>${p.name}</b> ($${p.price})<br>
-            ${p.category}<br>
-            <button class="del" onclick="deleteProduct('${p.id}')">Delete</button>
-          </div>
-        `;
-      });
-      document.getElementById("products").innerHTML = html;
-    });
-}
-loadProducts();
-
-// ADD / UPDATE PRODUCT
-function addProduct() {
-  fetch(API, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      data: [{
-        id: id.value,
-        name: name.value,
-        price: price.value,
-        image: image.value,
-        category: category.value
-      }]
-    })
-  }).then(() => {
-    alert("Product saved");
-    loadProducts();
-  });
-}
-<button onclick="addProduct()">➕ Add Product</button>
-
-// DELETE PRODUCT
-function deleteProduct(id) {
-  fetch(`${API}/id/${id}`, { method: "DELETE" })
-    .then(() => loadProducts());
-}
-</script>
-<script>
-const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // YOUR SheetDB
+// CONFIG
+const API = "https://sheetdb.io/api/v1/zq8bztk2qn6kx"; // Change to your SheetDB API
 const CLOUD_NAME = "dxuxsa5bg";
 const UPLOAD_PRESET = "cludes7u";
 
@@ -125,44 +73,106 @@ if (localStorage.getItem("admin") !== "true") {
   location.href = "admin-login.html";
 }
 
-// ADD PRODUCT
+function logout() {
+  localStorage.removeItem("admin");
+  location.href = "admin-login.html";
+}
+
+// ---------------- PRODUCTS ----------------
+async function loadProducts() {
+  const res = await fetch(API);
+  const data = await res.json();
+  let html = "";
+  data.forEach(p => {
+    html += `
+      <div class="card">
+        <b>${p.name}</b> ($${p.price})<br>
+        Category: ${p.category}<br>
+        <img src="${p.image}" width="100" style="margin:5px 0;"><br>
+        <button class="del" onclick="deleteProduct('${p.id}')">Delete</button>
+      </div>`;
+  });
+  document.getElementById("products").innerHTML = html;
+}
+loadProducts();
+
 async function addProduct() {
   const file = document.getElementById("imageFile").files[0];
   if (!file) return alert("Select an image");
-
-  // 1️⃣ Upload image to Cloudinary
   let formData = new FormData();
   formData.append("file", file);
   formData.append("upload_preset", UPLOAD_PRESET);
-
-  let res = await fetch(
-    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
-    { method: "POST", body: formData }
-  );
-
-  let imgData = await res.json();
-
-  // 2️⃣ Save product to Google Sheets
-  fetch(API, {
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
+  const imgData = await res.json();
+  await fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      data: [{
-        id: id.value,
-        name: name.value,
-        price: price.value,
-        image: imgData.secure_url,
-        category: category.value
-      }]
-    })
-  }).then(() => {
-    alert("Product added!");
-    loadProducts();
+    body: JSON.stringify({ data:[{ id:id.value, name:name.value, price:price.value, image:imgData.secure_url, category:category.value }] })
   });
+  alert("Product added/updated!");
+  loadProducts();
+}
+
+async function deleteProduct(id) {
+  await fetch(`${API}/id/${id}`, { method: "DELETE" });
+  loadProducts();
+}
+
+// ---------------- CATEGORIES ----------------
+let categoriesList = [];
+function loadCategories() {
+  let html = "";
+  categoriesList.forEach((c,i)=>{
+    html += `<div class="card">${c} <button class="del" onclick="deleteCategory(${i})">Delete</button></div>`;
+  });
+  document.getElementById("categories").innerHTML = html;
+}
+function addCategory() {
+  const c = document.getElementById("categoryName").value;
+  if(c) categoriesList.push(c);
+  loadCategories();
+}
+function deleteCategory(i) {
+  categoriesList.splice(i,1);
+  loadCategories();
+}
+
+// ---------------- HERO ----------------
+let hero = { image:"", text:"" };
+async function updateHero() {
+  const file = document.getElementById("heroImage").files[0];
+  if(!file) return alert("Select hero image");
+  let formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, { method: "POST", body: formData });
+  const imgData = await res.json();
+  hero.image = imgData.secure_url;
+  hero.text = document.getElementById("heroText").value;
+  alert("Hero section updated!");
+}
+
+// ---------------- FEATURED PRODUCTS ----------------
+let featuredProducts = [];
+function addFeatured() {
+  const id = document.getElementById("featuredProductID").value;
+  if(id && !featuredProducts.includes(id)) featuredProducts.push(id);
+  renderFeatured();
+}
+function renderFeatured() {
+  let html = "";
+  featuredProducts.forEach(f=> html+=`<div class="card">Product ID: ${f}</div>`);
+  document.getElementById("featuredProducts").innerHTML = html;
+}
+
+// ---------------- FOOTER ----------------
+let footer = { text:"", links:[] };
+function updateFooter() {
+  footer.text = document.getElementById("footerText").value;
+  footer.links = document.getElementById("footerLinks").value.split(",");
+  alert("Footer updated!");
 }
 </script>
 
 </body>
 </html>
-
-
