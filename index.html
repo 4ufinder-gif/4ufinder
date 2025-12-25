@@ -16,24 +16,85 @@
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: var(--light); }
 
-/* HEADER */
+/* HEADER AMAZON STYLE */
 header {
   background: var(--dark);
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
   flex-wrap: wrap;
+  padding: 10px 20px;
   position: sticky;
   top: 0;
   z-index: 1000;
 }
 
-.logo { font-size: 28px; font-weight: bold; color: var(--primary); }
-.search-box { flex:1; max-width:500px; margin:10px; }
-.search-box input { width:100%; padding: 10px; border-radius:5px; border:none; }
-.cart { background: var(--primary); padding:10px 15px; border-radius:5px; font-weight:bold; cursor:pointer; }
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-left .logo {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--primary);
+  cursor: pointer;
+}
+
+.header-left .location span {
+  font-size: 12px;
+}
+
+.search-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  max-width: 600px;
+  margin: 10px;
+}
+
+.category-select {
+  padding: 8px;
+  border-radius: 3px 0 0 3px;
+  border: none;
+  outline: none;
+}
+
+.search-container input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  outline: none;
+}
+
+.search-btn {
+  padding: 10px 15px;
+  background: #febd69;
+  border: none;
+  cursor: pointer;
+  border-radius: 0 3px 3px 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-right div {
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.header-right .cart {
+  background: var(--primary);
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+}
 
 /* NAV */
 nav { background: #fff; padding: 10px 20px; display: flex; overflow-x: auto; gap: 10px; border-bottom: 1px solid #ddd; position: sticky; top:60px; z-index: 999; }
@@ -89,9 +150,37 @@ footer a:hover { text-decoration: underline; }
 <body>
 
 <header>
-  <div class="logo">4uFinder</div>
-  <div class="search-box"><input type="text" placeholder="Search for products, brands and categories"></div>
-  <div class="cart">🛒 Cart (<span id="cartCount">0</span>)</div>
+  <div class="header-left">
+    <div class="logo">4uFinder</div>
+    <div class="location"><span>Hello, select your address</span></div>
+  </div>
+
+  <div class="search-container">
+    <select class="category-select">
+      <option>All</option>
+      <option>Electronics</option>
+      <option>Fashion</option>
+      <option>Home</option>
+      <option>Phones</option>
+      <option>Computers</option>
+      <option>Sports</option>
+      <option>Toys</option>
+    </select>
+    <input type="text" placeholder="Search for products, brands and categories">
+    <button class="search-btn">🔍</button>
+  </div>
+
+  <div class="header-right">
+    <div class="account">
+      <span>Hello, Sign in</span><br>
+      <strong>Account & Lists</strong>
+    </div>
+    <div class="orders">
+      <span>Returns</span><br>
+      <strong>& Orders</strong>
+    </div>
+    <div class="cart">🛒 Cart (<span id="cartCount">0</span>)</div>
+  </div>
 </header>
 
 <nav>
@@ -135,9 +224,9 @@ footer a:hover { text-decoration: underline; }
   <h2>🆕 New Arrivals</h2>
   <div class="products">
     <div class="product"><img src="https://images.unsplash.com/photo-1555529771-7a39f5f6501c?auto=format&fit=crop&w=400&q=80"><h3>Running Shoes</h3><p class="price">$79</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=400&q=80"><h3>Leather Bag</h3><p class="price">$120</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1590073247922-8b0ed6d5a125?auto=format&fit=crop&w=400&q=80"><h3>Smart Watch</h3><p class="price">$99</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1512499617640-c2f9990b0a6e?auto=format&fit=crop&w=400&q=80"><h3>DSLR Camera</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&w=400&q=80"><h3>Leather Bag</h3><p class="price">$120</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1590073247922-8b0ed6d5a125?auto=format&w=400&q=80"><h3>Smart Watch</h3><p class="price">$99</p><button onclick="addToCart()">Add to Cart</button></div>
+    <div class="product"><img src="https://images.unsplash.com/photo-1512499617640-c2f9990b0a6e?auto=format&w=400&q=80"><h3>DSLR Camera</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
   </div>
 </div>
 
