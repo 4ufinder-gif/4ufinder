@@ -214,11 +214,32 @@ let cart = 0;
 function addToCart() {
   cart++;
   document.getElementById("cartCount").innerText = cart;
+<div class="products" id="products"></div>
+
+<script>
+fetch("https://sheetdb.io/api/v1/zq8bztk2qn6kx")
+.then(res => res.json())
+.then(data => {
+  let html = "";
+  data.forEach(p => {
+    html += `
+    <div class="product">
+      <img src="${p.image}">
+      <h3>${p.name}</h3>
+      <p>$${p.price}</p>
+      <button>Add to Cart</button>
+    </div>`;
+  });
+  document.getElementById("products").innerHTML = html;
+});
+</script>
+
 }
 </script>
 
 </body>
 </html>
+
 
 
 
