@@ -223,26 +223,53 @@ document.getElementById("imagePreview").src=image;
 function deleteProduct(id){ if(confirm("Are you sure?")) fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>{alert("✅ Deleted"); loadProducts();}); }
 function toggleFeatured(id){ if(featuredProducts.includes(id)) featuredProducts=featuredProducts.filter(f=>f!==id); else featuredProducts.push(id); renderProducts(productsData); }
 
-// ---------- ORDERS ----------
-async function loadOrders(){
-const res=await fetch(API_ORDERS);
-const orders=await res.json();
-let html="";
-orders.forEach(o=>{
-html+=`<tr>
-<td>${o.id}</td>
-<td>${o.customerName} (${o.customerEmail})</td>
-<td>${o.products}</td>
-<td>$${o.total}</td>
-<td><input value="${o.status}" onchange="updateOrderStatus('${o.id}',this.value)"></td>
-<td><button class="btn delete" onclick="deleteOrder('${o.id}')">Delete</button></td>
-</tr>`;
-});
-document.getElementById("ordersList").innerHTML=html;
-updateDashboard();
+// Orders
+async function loadOrders() {
+    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/orders`, {
+        headers: { "Authorization": wcAuth() }
+    });
+    const orders = await res.json();
+    let html = "";
+    orders.forEach(o => {
+        html += `<tr>
+            <td>${o.id}</td>
+            <td>${o.billing.first_name} ${o.billing.last_name}</td>
+            <td>${o.line_items.map(li=>li.name).join(", ")}</td>
+            <td>$${o.total}</td>
+            <td>${o.status}</td>
+            <td><button class="btn delete" onclick="deleteOrder(${o.id})">Delete</button></td>
+        </tr>`;
+    });
+    document.getElementById("ordersList").innerHTML = html;
 }
-async function updateOrderStatus(id,status){ await fetch(`${API_ORDERS}/id/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{status}})}); }
-async function deleteOrder(id){ if(confirm("Are you sure?")) await fetch(`${API_ORDERS}/id/${id}`,{method:"DELETE"}).then(loadOrders); }
+
+// Delete Order
+async function deleteOrder(id){
+    if(!confirm("Are you sure?")) return;
+    await fetch(`${WP_SITE}/wp-json/wc/v3/orders/${id}?force=true`, {
+        method:"DELETE",
+        headers: { "Authorization": wcAuth() }
+    });
+    loadOrders();
+}
+
+// Customers
+async function loadCustomers() {
+    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/customers`, {
+        headers: { "Authorization": wcAuth() }
+    });
+    const customers = await res.json();
+    let html = "";
+    customers.forEach(c => {
+        html += `<tr>
+            <td>${c.first_name} ${c.last_name}</td>
+            <td>${c.email}</td>
+            <td>${c.date_created}</td>
+            <td><button class="btn delete" onclick="deleteCustomer(${c.id})">Delete</button></td>
+        </tr>`;
+    });
+    document.getElementById("customersList").innerHTML = html;
+}
 
 // ---------- SLIDERS ----------
 let slidersData=[];
