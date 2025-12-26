@@ -137,13 +137,13 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 
 <script>
 // ---------- CONFIG ----------
-const API_PRODUCTS="https://sheetdb.io/api/v1/zq8bztk2qn6kx";
-const API_ORDERS="https://sheetdb.io/api/v1/YOUR_ORDERS_ID";
-const API_CUSTOMERS="https://sheetdb.io/api/v1/YOUR_CUSTOMERS_ID";
-const API_SLIDERS="https://sheetdb.io/api/v1/YOUR_SLIDERS_ID";
-const API_SERVICES="https://sheetdb.io/api/v1/YOUR_SERVICES_ID";
-const CLOUD_NAME="dxuxsa5bg";
-const UPLOAD_PRESET="cludes7u";
+const WP_SITE = "https://4ufinder.vercel.app";
+const WC_KEY = "ck_034ebc6c65e49e5c4ea89b315081047cecae777c";      // WooCommerce consumer key
+const WC_SECRET = "cs_c2e90ffd295a77ddf4462522a0d63577cc4afd65";   // WooCommerce consumer secret
+
+function wcAuth(){
+    return 'Basic ' + btoa(WC_KEY + ':' + WC_SECRET);
+}
 
 // ---------- SECURITY ----------
 if(localStorage.getItem("admin")!=="true") location.href="admin-login.html";
