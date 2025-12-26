@@ -5,88 +5,231 @@
 <title>4uFinder Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  body { font-family: Arial, sans-serif; margin:0; display:flex; background:#f4f4f4; }
-  nav { width: 240px; background: #222; color: #fff; height: 100vh; padding: 20px; flex-shrink:0; }
-  nav h2 { margin-top:0; color:#ff9900; }
-  nav button { display:block; margin: 5px 0; padding: 12px; width:100%; background: #ff9900; border:none; border-radius:5px; color:#fff; font-weight:bold; cursor:pointer; text-align:left; }
-  nav button.active { background:#ffb84d; color:#000; }
-  main { flex:1; padding:20px; overflow-y:auto; }
-  header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  header h1 { margin:0; font-size:22px; }
-  section { display:none; }
-  section.active { display:block; }
-  input, select, button { padding:8px; margin:5px 0; border-radius:4px; border:1px solid #ccc; }
-  table { width:100%; border-collapse: collapse; margin-top:10px; }
-  table th, table td { border:1px solid #ccc; padding:8px; text-align:left; }
-  .btn { padding:5px 10px; border:none; border-radius:3px; cursor:pointer; }
-  .btn.edit { background:#4caf50; color:#fff; }
-  .btn.delete { background:red; color:#fff; }
-  .btn.feature { background:#ff9800; color:#fff; margin-left:5px; }
-  img.preview { max-width:100px; margin-top:5px; display:block; }
+body { font-family: Arial, sans-serif; margin:0; display:flex; background:#f4f4f4; }
+nav { width: 240px; background: #222; color: #fff; height: 100vh; padding: 20px; flex-shrink:0; }
+nav h2 { margin-top:0; color:#ff9900; }
+nav button { display:block; margin: 5px 0; padding: 12px; width:100%; background: #ff9900; border:none; border-radius:5px; color:#fff; font-weight:bold; cursor:pointer; text-align:left; }
+nav button.active { background:#ffb84d; color:#000; }
+main { flex:1; padding:20px; overflow-y:auto; }
+header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+header h1 { margin:0; font-size:22px; }
+section { display:none; }
+section.active { display:block; }
+input, select, button { padding:8px; margin:5px 0; border-radius:4px; border:1px solid #ccc; }
+table { width:100%; border-collapse: collapse; margin-top:10px; }
+table th, table td { border:1px solid #ccc; padding:8px; text-align:left; }
+.btn { padding:5px 10px; border:none; border-radius:3px; cursor:pointer; }
+.btn.edit { background:#4caf50; color:#fff; }
+.btn.delete { background:red; color:#fff; }
+.btn.feature { background:#ff9800; color:#fff; margin-left:5px; }
+img.preview { max-width:100px; margin-top:5px; display:block; }
 </style>
 </head>
 <body>
 
 <nav>
-  <h2>4uFinder Admin</h2>
-  <button onclick="showSection('dashboard')" class="active">Dashboard</button>
-  <button onclick="showSection('websiteSettings')">Website Settings</button>
-  <button onclick="showSection('shopSettings')">Shop Settings</button>
-  <button onclick="showSection('productsSection')">Products</button>
-  <button onclick="showSection('ordersSection')">Orders</button>
-  <button onclick="showSection('slidersSection')">Sliders</button>
-  <button onclick="showSection('servicesSection')">Services</button>
-  <button onclick="showSection('customersSection')">Customers</button>
+<h2>4uFinder Admin</h2>
+<button onclick="showSection('dashboard')" class="active">Dashboard</button>
+<button onclick="showSection('websiteSettings')">Website Settings</button>
+<button onclick="showSection('shopSettings')">Shop Settings</button>
+<button onclick="showSection('productsSection')">Products</button>
+<button onclick="showSection('ordersSection')">Orders</button>
+<button onclick="showSection('slidersSection')">Sliders</button>
+<button onclick="showSection('servicesSection')">Services</button>
+<button onclick="showSection('customersSection')">Customers</button>
 </nav>
 
 <main>
 <header>
-  <h1>Admin Panel</h1>
-  <button onclick="logout()">Logout</button>
+<h1>Admin Panel</h1>
+<button onclick="logout()">Logout</button>
 </header>
 
+<!-- DASHBOARD -->
 <section id="dashboard" class="active">
-  <h2>📊 Dashboard</h2>
-  <p>Quick overview of your store stats.</p>
+<h2>📊 Dashboard</h2>
+<p>Quick overview of your store stats.</p>
 </section>
 
+<!-- WEBSITE SETTINGS -->
 <section id="websiteSettings">
-  <h2>🌐 Website Settings</h2>
-  <input placeholder="Website Name" id="websiteName">
-  <input placeholder="Logo URL" id="logoURL">
-  <input placeholder="Contact Email" id="contactEmail">
-  <button onclick="saveWebsiteSettings()">Save Settings</button>
+<h2>🌐 Website Settings</h2>
+<input placeholder="Website Name" id="websiteName">
+<input placeholder="Logo URL" id="logoURL">
+<input placeholder="Contact Email" id="contactEmail">
+<button onclick="saveWebsiteSettings()">Save Settings</button>
 </section>
 
+<!-- SHOP SETTINGS -->
 <section id="shopSettings">
-  <h2>🏪 Shop Settings</h2>
-  <input placeholder="Currency" id="currency">
-  <input placeholder="Tax Rate" id="taxRate">
-  <input placeholder="Shipping Options" id="shippingOptions">
-  <button onclick="saveShopSettings()">Save Settings</button>
+<h2>🏪 Shop Settings</h2>
+<input placeholder="Currency" id="currency">
+<input placeholder="Tax Rate" id="taxRate">
+<input placeholder="Shipping Options" id="shippingOptions">
+<button onclick="saveShopSettings()">Save Settings</button>
 </section>
 
+<!-- PRODUCTS -->
 <section id="productsSection">
-  <h2>🛠 Products</h2>
-  <input type="hidden" id="id">
-  <input placeholder="Product Name" id="name">
-  <input placeholder="Price" id="price">
-  <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)">
-  <img id="imagePreview" class="preview" src="">
-  <input placeholder="Category" id="category">
-  <button onclick="addProduct()">➕ Add / Update Product</button>
-  <input type="text" placeholder="Search products..." id="productSearch" onkeyup="searchProducts()">
+<h2>🛠 Products</h2>
+<input type="hidden" id="id">
+<input placeholder="Product Name" id="name">
+<input placeholder="Price" id="price">
+<input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)">
+<img id="imagePreview" class="preview" src="">
+<input placeholder="Category" id="category">
+<button onclick="addProduct()">➕ Add / Update Product</button>
+<input type="text" placeholder="Search products..." id="productSearch" onkeyup="searchProducts()">
 
-  <table>
-    <thead>
-      <tr><th>Name</th><th>Price</th><th>Category</th><th>Featured</th><th>Actions</th></tr>
-    </thead>
-    <tbody id="products"></tbody>
-  </table>
+<table>
+<thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Featured</th><th>Actions</th></tr></thead>
+<tbody id="products"></tbody>
+</table>
 </section>
 
+<!-- ORDERS -->
 <section id="ordersSection">
-  <h2>🧾 Orders</h2>
-  <table>
-    <thead>
-      <tr><th>Order
+<h2>🧾 Orders</h2>
+<table>
+<thead><tr><th>Order ID</th><th>Customer</th><th>Products</th><th>Total</th><th>Status</th></tr></thead>
+<tbody id="ordersList"></tbody>
+</table>
+</section>
+
+<!-- SLIDERS -->
+<section id="slidersSection">
+<h2>🎞 Sliders</h2>
+<input placeholder="Slider Image URL" id="sliderImage">
+<input placeholder="Slider Title" id="sliderTitle">
+<button onclick="addSlider()">Add Slider</button>
+<table>
+<thead><tr><th>Title</th><th>Image</th><th>Actions</th></tr></thead>
+<tbody id="sliderList"></tbody>
+</table>
+</section>
+
+<!-- SERVICES -->
+<section id="servicesSection">
+<h2>🛎 Services</h2>
+<input placeholder="Service Name" id="serviceName">
+<input placeholder="Service Description" id="serviceDescription">
+<button onclick="addService()">Add Service</button>
+<table>
+<thead><tr><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+<tbody id="serviceList"></tbody>
+</table>
+</section>
+
+<!-- CUSTOMERS -->
+<section id="customersSection">
+<h2>👥 Customers</h2>
+<table>
+<thead><tr><th>Name</th><th>Email</th><th>Registered</th></tr></thead>
+<tbody id="customersList"></tbody>
+</table>
+</section>
+
+<script>
+const API_PRODUCTS="https://sheetdb.io/api/v1/zq8bztk2qn6kx";
+const API_ORDERS="https://sheetdb.io/api/v1/YOUR_ORDERS_ID";
+const API_CUSTOMERS="https://sheetdb.io/api/v1/YOUR_CUSTOMERS_ID";
+const CLOUD_NAME="dxuxsa5bg";
+const UPLOAD_PRESET="cludes7u";
+
+// Security
+if(localStorage.getItem("admin")!=="true") location.href="admin-login.html";
+
+function logout(){ localStorage.removeItem("admin"); location.href="admin-login.html"; }
+
+function showSection(id){
+document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelector(`nav button[onclick="showSection('${id}')"]`).classList.add('active');
+}
+
+function previewImage(e){
+document.getElementById("imagePreview").src = URL.createObjectURL(e.target.files[0]);
+}
+
+// --- PRODUCTS ---
+let productsData=[], featuredProducts=[];
+async function loadProducts(){
+const res = await fetch(API_PRODUCTS);
+productsData = await res.json();
+renderProducts(productsData);
+}
+
+function renderProducts(data){
+let html="";
+data.forEach(p=>{
+html+=`<tr>
+<td>${p.name}</td>
+<td>$${p.price}</td>
+<td>${p.category}</td>
+<td><button class="btn feature" onclick="toggleFeatured('${p.id}')">${featuredProducts.includes(p.id)?'★':'☆'}</button></td>
+<td>
+<button class="btn edit" onclick="editProduct('${p.id}','${p.name}','${p.price}','${p.image}','${p.category}')">Edit</button>
+<button class="btn delete" onclick="deleteProduct('${p.id}')">Delete</button>
+</td>
+</tr>`;
+});
+document.getElementById("products").innerHTML=html;
+}
+
+function searchProducts(){
+const term=document.getElementById("productSearch").value.toLowerCase();
+renderProducts(productsData.filter(p=>p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
+}
+
+async function addProduct(){
+const idEl=document.getElementById("id");
+const nameEl=document.getElementById("name");
+const priceEl=document.getElementById("price");
+const categoryEl=document.getElementById("category");
+const imageFileEl=document.getElementById("imageFile");
+
+let imageURL=imageFileEl.dataset.old||"";
+const file=imageFileEl.files[0];
+if(file){
+const formData=new FormData();
+formData.append("file",file);
+formData.append("upload_preset",UPLOAD_PRESET);
+const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
+const imgData=await res.json();
+imageURL=imgData.secure_url;
+}
+if(!nameEl.value||!priceEl.value||!categoryEl.value){alert("Fill all fields"); return;}
+const product={id:idEl.value||Date.now(),name:nameEl.value,price:priceEl.value,image:imageURL,category:categoryEl.value};
+const method=idEl.value?"PUT":"POST";
+const url=idEl.value?`${API_PRODUCTS}/id/${idEl.value}`:API_PRODUCTS;
+await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify({data:product})});
+alert("✅ Product saved!");
+idEl.value=""; nameEl.value=""; priceEl.value=""; categoryEl.value=""; imageFileEl.value=""; imageFileEl.dataset.old=""; document.getElementById("imagePreview").src="";
+loadProducts();
+}
+
+function editProduct(id,name,price,image,category){
+document.getElementById("id").value=id;
+document.getElementById("name").value=name;
+document.getElementById("price").value=price;
+document.getElementById("category").value=category;
+document.getElementById("imageFile").dataset.old=image;
+document.getElementById("imagePreview").src=image;
+}
+
+function deleteProduct(id){
+if(confirm("Are you sure?")) fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>{alert("✅ Deleted"); loadProducts();});
+}
+
+function toggleFeatured(id){
+if(featuredProducts.includes(id)) featuredProducts=featuredProducts.filter(f=>f!==id);
+else featuredProducts.push(id);
+renderProducts(productsData);
+}
+
+loadProducts();
+</script>
+
+</body>
+</html>
