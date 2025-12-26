@@ -147,37 +147,63 @@ async function loadProducts() {
   });
   document.getElementById("products").innerHTML=html;
 }
-loadProducts();
+async function addProduct() {
+  let imageURL = document.getElementById("imageFile").dataset.old || "";
 
-async function loadProducts() {
-  const res = await fetch(API_PRODUCTS);
-  const data = await res.json();
+  const file = document.getElementById("imageFile").files[0];
 
-  let html = "";
-  const select = document.getElementById("featuredSelect");
-  select.innerHTML = `<option value="">-- Select Product --</option>`;
+  // Upload new image only if selected
+  if (file) {
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
 
-  data.forEach(p=>{
-    html+=`
-      <div class="card">
-        <b>${p.name}</b> ($${p.price})<br>
-        ${p.category}<br><br>
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+      { method: "POST", body: formData }
+    );
 
-        <button onclick="editProduct('${p.id}','${p.name}','${p.price}','${p.image}','${p.category}')">
-          ✏ Edit
-        </button>
+    const imgData = await res.json();
+    imageURL = imgData.secure_url;
+  }
 
-        <button class="del" onclick="deleteProduct('${p.id}')">
-          🗑 Delete
-        </button>
-      </div>
-    `;
+  if (!name.value || !price.value || !category.value) {
+    alert("Please fill all fields");
+    return;
+  }
 
-    select.innerHTML+=`<option value="${p.id}">${p.name}</option>`;
+  const product = {
+    id: id.value || Date.now(),
+    name: name.value,
+    price: price.value,
+    image: imageURL,
+    category: category.value
+  };
+
+  const method = id.value ? "PUT" : "POST";
+  const url = id.value
+    ? `${API_PRODUCTS}/id/${id.value}`
+    : API_PRODUCTS;
+
+  await fetch(url, {
+    method: method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: product })
   });
 
-  document.getElementById("products").innerHTML = html;
+  alert("✅ Product saved successfully!");
+
+  // Clear form
+  document.getElementById("id").value = "";
+  document.getElementById("name").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("category").value = "";
+  document.getElementById("imageFile").value = "";
+  document.getElementById("imageFile").dataset.old = "";
+
+  loadProducts();
 }
+
 function editProduct(id,name,price,image,category){
   document.getElementById("id").value = id;
   document.getElementById("name").value = name;
