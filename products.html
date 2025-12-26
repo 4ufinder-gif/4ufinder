@@ -4,10 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Products | 4uFinder</title>
+
 <style>
 body{font-family:Arial;background:#f8f8f8;margin:0}
-header{background:#fff;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
+header{
+  background:#fff;
+  padding:15px;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
 .logo{font-size:24px;color:#e53238;font-weight:bold}
+header a{text-decoration:none;font-weight:bold;color:#000}
+
 .container{padding:20px}
 .products{
   display:grid;
@@ -29,43 +39,85 @@ header{background:#fff;padding:15px;box-shadow:0 2px 5px rgba(0,0,0,.1)}
 }
 .product h3{font-size:16px;margin:10px 0}
 .price{color:green;font-weight:bold}
-.product a{
+
+.btn{
   display:block;
-  margin-top:10px;
+  margin-top:8px;
   background:#e53238;
   color:#fff;
   padding:10px;
   text-decoration:none;
-  border-radius:5px
+  border-radius:5px;
+  cursor:pointer;
+}
+.btn.secondary{
+  background:#555;
 }
 </style>
 </head>
+
 <body>
 
 <header>
   <div class="logo">4uFinder</div>
+  <a href="cart.html">🛒 Cart</a>
 </header>
 
 <div class="container">
   <h2>All Products</h2>
 
   <div class="products">
+
+    <!-- PRODUCT 1 -->
     <div class="product">
       <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
       <h3>Smartphone Pro</h3>
       <p class="price">$299</p>
-      <a href="product.html?id=1">View Product</a>
+
+      <div class="btn" onclick="addToCart(1,'Smartphone Pro',299,'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9')">
+        Add to Cart
+      </div>
+
+      <a class="btn secondary" href="product.html?id=1">View Product</a>
     </div>
 
+    <!-- PRODUCT 2 -->
     <div class="product">
       <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e">
       <h3>Wireless Headphones</h3>
       <p class="price">$59</p>
-      <a href="product.html?id=2">View Product</a>
+
+      <div class="btn" onclick="addToCart(2,'Wireless Headphones',59,'https://images.unsplash.com/photo-1505740420928-5e560c06d30e')">
+        Add to Cart
+      </div>
+
+      <a class="btn secondary" href="product.html?id=2">View Product</a>
     </div>
 
   </div>
 </div>
 
-</body>
-</html>
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function addToCart(id,name,price,image){
+  const existing = cart.find(item => item.id === id);
+
+  if(existing){
+    existing.qty += 1;
+  }else{
+    cart.push({
+      id: id,
+      name: name,
+      price: price,
+      image: image,
+      qty: 1
+    });
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+  alert("Added to cart!");
+}
+</script>
+
+</body
