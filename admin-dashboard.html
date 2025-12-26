@@ -149,26 +149,36 @@ async function loadProducts() {
 }
 loadProducts();
 
-async function addProduct() {
-  const file=document.getElementById("imageFile").files[0];
-  if(!file)return alert("Select an image");
-  let formData=new FormData();
-  formData.append("file",file);
-  formData.append("upload_preset",UPLOAD_PRESET);
-  let res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
-  let imgData=await res.json();
-  await fetch(API_PRODUCTS,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({data:[{id:id.value,name:name.value,price:price.value,image:imgData.secure_url,category:category.value}]})
+async function loadProducts() {
+  const res = await fetch(API_PRODUCTS);
+  const data = await res.json();
+
+  let html = "";
+  const select = document.getElementById("featuredSelect");
+  select.innerHTML = `<option value="">-- Select Product --</option>`;
+
+  data.forEach(p=>{
+    html+=`
+      <div class="card">
+        <b>${p.name}</b> ($${p.price})<br>
+        ${p.category}<br><br>
+
+        <button onclick="editProduct('${p.id}','${p.name}','${p.price}','${p.image}','${p.category}')">
+          ✏ Edit
+        </button>
+
+        <button class="del" onclick="deleteProduct('${p.id}')">
+          🗑 Delete
+        </button>
+      </div>
+    `;
+
+    select.innerHTML+=`<option value="${p.id}">${p.name}</option>`;
   });
-  alert("Product added!");
-  loadProducts();
+
+  document.getElementById("products").innerHTML = html;
 }
 
-function deleteProduct(id){
-  fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>loadProducts());
-}
 
 // ---------------- FEATURED ----------------
 function addFeatured(){
