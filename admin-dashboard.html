@@ -49,6 +49,11 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <section id="dashboard" class="active">
 <h2>📊 Dashboard</h2>
 <p>Quick overview of your store stats.</p>
+<ul>
+<li id="totalProducts">Products: 0</li>
+<li id="totalOrders">Orders: 0</li>
+<li id="totalCustomers">Customers: 0</li>
+</ul>
 </section>
 
 <!-- WEBSITE SETTINGS -->
@@ -91,7 +96,7 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <section id="ordersSection">
 <h2>🧾 Orders</h2>
 <table>
-<thead><tr><th>Order ID</th><th>Customer</th><th>Products</th><th>Total</th><th>Status</th></tr></thead>
+<thead><tr><th>ID</th><th>Customer</th><th>Products</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead>
 <tbody id="ordersList"></tbody>
 </table>
 </section>
@@ -99,8 +104,9 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <!-- SLIDERS -->
 <section id="slidersSection">
 <h2>🎞 Sliders</h2>
-<input placeholder="Slider Image URL" id="sliderImage">
 <input placeholder="Slider Title" id="sliderTitle">
+<input type="file" id="sliderImage" accept="image/*" onchange="previewSliderImage(event)">
+<img id="sliderPreview" class="preview" src="">
 <button onclick="addSlider()">Add Slider</button>
 <table>
 <thead><tr><th>Title</th><th>Image</th><th>Actions</th></tr></thead>
@@ -124,23 +130,26 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <section id="customersSection">
 <h2>👥 Customers</h2>
 <table>
-<thead><tr><th>Name</th><th>Email</th><th>Registered</th></tr></thead>
+<thead><tr><th>Name</th><th>Email</th><th>Registered</th><th>Actions</th></tr></thead>
 <tbody id="customersList"></tbody>
 </table>
 </section>
 
 <script>
+// ---------- CONFIG ----------
 const API_PRODUCTS="https://sheetdb.io/api/v1/zq8bztk2qn6kx";
 const API_ORDERS="https://sheetdb.io/api/v1/YOUR_ORDERS_ID";
 const API_CUSTOMERS="https://sheetdb.io/api/v1/YOUR_CUSTOMERS_ID";
+const API_SLIDERS="https://sheetdb.io/api/v1/YOUR_SLIDERS_ID";
+const API_SERVICES="https://sheetdb.io/api/v1/YOUR_SERVICES_ID";
 const CLOUD_NAME="dxuxsa5bg";
 const UPLOAD_PRESET="cludes7u";
 
-// Security
+// ---------- SECURITY ----------
 if(localStorage.getItem("admin")!=="true") location.href="admin-login.html";
-
 function logout(){ localStorage.removeItem("admin"); location.href="admin-login.html"; }
 
+// ---------- UI ----------
 function showSection(id){
 document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
 document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
@@ -148,18 +157,17 @@ document.getElementById(id).classList.add('active');
 document.querySelector(`nav button[onclick="showSection('${id}')"]`).classList.add('active');
 }
 
-function previewImage(e){
-document.getElementById("imagePreview").src = URL.createObjectURL(e.target.files[0]);
-}
+function previewImage(e){ document.getElementById("imagePreview").src = URL.createObjectURL(e.target.files[0]); }
+function previewSliderImage(e){ document.getElementById("sliderPreview").src = URL.createObjectURL(e.target.files[0]); }
 
-// --- PRODUCTS ---
+// ---------- PRODUCTS ----------
 let productsData=[], featuredProducts=[];
 async function loadProducts(){
-const res = await fetch(API_PRODUCTS);
-productsData = await res.json();
+const res=await fetch(API_PRODUCTS);
+productsData=await res.json();
 renderProducts(productsData);
+updateDashboard();
 }
-
 function renderProducts(data){
 let html="";
 data.forEach(p=>{
@@ -176,24 +184,20 @@ html+=`<tr>
 });
 document.getElementById("products").innerHTML=html;
 }
-
 function searchProducts(){
 const term=document.getElementById("productSearch").value.toLowerCase();
-renderProducts(productsData.filter(p=>p.name.toLowerCase().includes(term) || p.category.toLowerCase().includes(term)));
+renderProducts(productsData.filter(p=>p.name.toLowerCase().includes(term)||p.category.toLowerCase().includes(term)));
 }
-
 async function addProduct(){
 const idEl=document.getElementById("id");
 const nameEl=document.getElementById("name");
 const priceEl=document.getElementById("price");
 const categoryEl=document.getElementById("category");
-const imageFileEl=document.getElementById("imageFile");
-
-let imageURL=imageFileEl.dataset.old||"";
-const file=imageFileEl.files[0];
-if(file){
+const imageEl=document.getElementById("imageFile");
+let imageURL=imageEl.dataset.old||"";
+if(imageEl.files[0]){
 const formData=new FormData();
-formData.append("file",file);
+formData.append("file",imageEl.files[0]);
 formData.append("upload_preset",UPLOAD_PRESET);
 const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
 const imgData=await res.json();
@@ -205,10 +209,9 @@ const method=idEl.value?"PUT":"POST";
 const url=idEl.value?`${API_PRODUCTS}/id/${idEl.value}`:API_PRODUCTS;
 await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify({data:product})});
 alert("✅ Product saved!");
-idEl.value=""; nameEl.value=""; priceEl.value=""; categoryEl.value=""; imageFileEl.value=""; imageFileEl.dataset.old=""; document.getElementById("imagePreview").src="";
+idEl.value=""; nameEl.value=""; priceEl.value=""; categoryEl.value=""; imageEl.value=""; imageEl.dataset.old=""; document.getElementById("imagePreview").src="";
 loadProducts();
 }
-
 function editProduct(id,name,price,image,category){
 document.getElementById("id").value=id;
 document.getElementById("name").value=name;
@@ -217,18 +220,65 @@ document.getElementById("category").value=category;
 document.getElementById("imageFile").dataset.old=image;
 document.getElementById("imagePreview").src=image;
 }
+function deleteProduct(id){ if(confirm("Are you sure?")) fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>{alert("✅ Deleted"); loadProducts();}); }
+function toggleFeatured(id){ if(featuredProducts.includes(id)) featuredProducts=featuredProducts.filter(f=>f!==id); else featuredProducts.push(id); renderProducts(productsData); }
 
-function deleteProduct(id){
-if(confirm("Are you sure?")) fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>{alert("✅ Deleted"); loadProducts();});
+// ---------- ORDERS ----------
+async function loadOrders(){
+const res=await fetch(API_ORDERS);
+const orders=await res.json();
+let html="";
+orders.forEach(o=>{
+html+=`<tr>
+<td>${o.id}</td>
+<td>${o.customerName} (${o.customerEmail})</td>
+<td>${o.products}</td>
+<td>$${o.total}</td>
+<td><input value="${o.status}" onchange="updateOrderStatus('${o.id}',this.value)"></td>
+<td><button class="btn delete" onclick="deleteOrder('${o.id}')">Delete</button></td>
+</tr>`;
+});
+document.getElementById("ordersList").innerHTML=html;
+updateDashboard();
+}
+async function updateOrderStatus(id,status){ await fetch(`${API_ORDERS}/id/${id}`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:{status}})}); }
+async function deleteOrder(id){ if(confirm("Are you sure?")) await fetch(`${API_ORDERS}/id/${id}`,{method:"DELETE"}).then(loadOrders); }
+
+// ---------- SLIDERS ----------
+let slidersData=[];
+async function loadSliders(){ const res=await fetch(API_SLIDERS); slidersData=await res.json(); renderSliders(); }
+function renderSliders(){ let html=""; slidersData.forEach(s=>{ html+=`<tr><td>${s.title}</td><td><img src="${s.image}" width="80"></td><td><button class="btn delete" onclick="deleteSlider('${s.id}')">Delete</button></td></tr>`; }); document.getElementById("sliderList").innerHTML=html; }
+async function addSlider(){ const title=document.getElementById("sliderTitle").value; const imageFile=document.getElementById("sliderImage"); let imageURL=""; if(imageFile.files[0]){ const formData=new FormData(); formData.append("file",imageFile.files[0]); formData.append("upload_preset",UPLOAD_PRESET); const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData}); const imgData=await res.json(); imageURL=imgData.secure_url; } if(!title||!imageURL){alert("Fill all fields"); return;} const slider={id:Date.now(),title,image:imageURL}; await fetch(API_SLIDERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:slider})}); alert("✅ Slider added"); document.getElementById("sliderTitle").value=""; document.getElementById("sliderImage").value=""; document.getElementById("sliderPreview").src=""; loadSliders(); }
+async function deleteSlider(id){ if(confirm("Are you sure?")) await fetch(`${API_SLIDERS}/id/${id}`,{method:"DELETE"}).then(loadSliders); }
+
+// ---------- SERVICES ----------
+let servicesData=[];
+async function loadServices(){ const res=await fetch(API_SERVICES); servicesData=await res.json(); renderServices(); }
+function renderServices(){ let html=""; servicesData.forEach(s=>{ html+=`<tr><td>${s.name}</td><td>${s.description}</td><td><button class="btn delete" onclick="deleteService('${s.id}')">Delete</button></td></tr>`; }); document.getElementById("serviceList").innerHTML=html; }
+async function addService(){ const name=document.getElementById("serviceName").value; const desc=document.getElementById("serviceDescription").value; if(!name||!desc){alert("Fill all fields"); return;} const service={id:Date.now(),name,description:desc}; await fetch(API_SERVICES,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:service})}); alert("✅ Service added"); document.getElementById("serviceName").value=""; document.getElementById("serviceDescription").value=""; loadServices(); }
+async function deleteService(id){ if(confirm("Are you sure?")) await fetch(`${API_SERVICES}/id/${id}`,{method:"DELETE"}).then(loadServices); }
+
+// ---------- CUSTOMERS ----------
+async function loadCustomers(){ const res=await fetch(API_CUSTOMERS); const customers=await res.json(); let html=""; customers.forEach(c=>{ html+=`<tr><td>${c.name}</td><td>${c.email}</td><td>${c.registeredDate||'N/A'}</td><td><button class="btn delete" onclick="deleteCustomer('${c.id}')">Delete</button></td></tr>`; }); document.getElementById("customersList").innerHTML=html; updateDashboard(); }
+async function deleteCustomer(id){ if(confirm("Are you sure?")) await fetch(`${API_CUSTOMERS}/id/${id}`,{method:"DELETE"}).then(loadCustomers); }
+
+// ---------- SETTINGS ----------
+function saveWebsiteSettings(){ alert("✅ Website settings saved (implement API)"); }
+function saveShopSettings(){ alert("✅ Shop settings saved (implement API)"); }
+
+// ---------- DASHBOARD COUNTERS ----------
+function updateDashboard(){
+document.getElementById("totalProducts").innerText=`Products: ${productsData.length}`;
+document.getElementById("totalOrders").innerText=`Orders: ${document.getElementById("ordersList").rows.length}`;
+document.getElementById("totalCustomers").innerText=`Customers: ${document.getElementById("customersList").rows.length}`;
 }
 
-function toggleFeatured(id){
-if(featuredProducts.includes(id)) featuredProducts=featuredProducts.filter(f=>f!==id);
-else featuredProducts.push(id);
-renderProducts(productsData);
-}
-
+// ---------- INITIAL LOAD ----------
 loadProducts();
+loadOrders();
+loadSliders();
+loadServices();
+loadCustomers();
 </script>
 
 </body>
