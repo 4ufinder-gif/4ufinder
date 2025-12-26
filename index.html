@@ -4,22 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4uFinder | Online Marketplace</title>
+
 <style>
-/* --- SAME STYLES (UNCHANGED) --- */
 :root {
   --primary: #e53238;
   --dark: #002f34;
   --light: #f8f8f8;
-  --text-dark: #333;
 }
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
 body{background:var(--light)}
+
 header{position:sticky;top:0;z-index:1000;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.1)}
 .header-top{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;flex-wrap:wrap}
 .logo{font-size:28px;font-weight:bold;color:var(--primary)}
+
 .search-container{flex:1;display:flex;margin:0 20px}
 .search-container input{flex:1;padding:10px;border:1px solid #ccc;border-radius:4px 0 0 4px}
 .search-container button{background:var(--primary);color:#fff;border:none;padding:10px 18px}
+
 .header-right{display:flex;gap:15px;align-items:center}
 .header-right a{text-decoration:none;color:#000;font-weight:bold}
 
@@ -54,10 +56,12 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
 <header>
   <div class="header-top">
     <div class="logo">4uFinder</div>
+
     <div class="search-container">
       <input placeholder="Search for anything">
       <button>🔍</button>
     </div>
+
     <div class="header-right">
       <a href="#">Sign in</a>
       <a href="#">Sell</a>
@@ -121,14 +125,3 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
 
 </body>
 </html>
-
-function addToCart(){ cart++; document.getElementById("cartCount").innerText = cart; }
-
-const slider = document.getElementById('featuredSlider');
-setInterval(() => { slider.scrollBy({ left: 220, behavior: 'smooth' }); }, 3000);
-</script>
-</body>
-</html>
-
-
-
