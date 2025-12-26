@@ -10,25 +10,23 @@
   --dark: #002f34;
   --light: #f8f8f8;
   --text-dark: #333;
-  --category-colors: #ffcc00, #29a3a3, #f79e1b, #6f42c1, #00a859, #ff6f61, #00bfff, #ff1493;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: var(--light); }
 
-/* HEADER EBAY STYLE */
-header { position: sticky; top:0; z-index:1000; width: 100%; background:#fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+/* HEADER */
+header { position: sticky; top:0; z-index:1000; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
 .header-top { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; flex-wrap:wrap; }
 .logo { font-size:28px; font-weight:bold; color: var(--primary); }
 .search-container { flex:1; display:flex; margin:0 20px; }
-.search-container input { flex:1; padding:10px 12px; border:1px solid #ccc; border-radius:4px 0 0 4px; font-size:16px; }
-.search-container button { background: var(--primary); border:none; color:#fff; padding:10px 18px; font-size:16px; cursor:pointer; border-radius:0 4px 4px 0; }
-.header-right { display:flex; gap:20px; font-size:14px; align-items:center; flex-wrap:wrap; }
-.header-right div { cursor:pointer; }
+.search-container input { flex:1; padding:10px; border:1px solid #ccc; border-radius:4px 0 0 4px; }
+.search-container button { background: var(--primary); color:#fff; border:none; padding:10px 18px; }
+.header-right { display:flex; gap:15px; align-items:center; }
 
-/* NAVIGATION BAR BELOW HEADER */
-nav { display:flex; gap:10px; overflow-x:auto; padding:8px 20px; background:#f8f8f8; border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
-nav a { text-decoration:none; color:#fff; padding:8px 14px; white-space:nowrap; border-radius:4px; transition:0.2s; font-weight:bold; }
+/* NAV */
+nav { display:flex; gap:10px; padding:8px 20px; background:#f8f8f8; border-top:1px solid #ddd; border-bottom:1px solid #ddd; }
+nav a { text-decoration:none; color:#fff; padding:8px 14px; border-radius:4px; font-weight:bold; }
 nav a:nth-child(1){ background:#ffcc00; color:#000; }
 nav a:nth-child(2){ background:#29a3a3; }
 nav a:nth-child(3){ background:#f79e1b; }
@@ -37,67 +35,40 @@ nav a:nth-child(5){ background:#00a859; }
 nav a:nth-child(6){ background:#ff6f61; }
 nav a:nth-child(7){ background:#00bfff; }
 nav a:nth-child(8){ background:#ff1493; }
-nav a:hover { filter: brightness(1.2); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-/* HERO / TOP DEALS */
+/* HERO */
 .hero { margin:20px; position: relative; }
 .hero img { width:100%; height:350px; object-fit:cover; border-radius:10px; }
-.hero .banner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background: rgba(0,0,0,0.6); padding:30px 50px; border-radius:10px; color:#fff; font-size:32px; text-align:center; }
+.banner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,.6); padding:30px 50px; border-radius:10px; color:#fff; font-size:32px; }
 
-/* SLIDERS */
-.slider-container { margin: 20px; }
-.slider-title { font-size: 22px; margin-bottom: 10px; color: var(--text-dark); }
-.slider { display:flex; overflow-x:auto; gap: 15px; padding-bottom: 10px; scroll-behavior: smooth; }
+/* PRODUCTS */
+.slider { display:flex; gap:15px; overflow-x:auto; padding:20px; }
 .slider::-webkit-scrollbar { display:none; }
-.slider .product { flex:0 0 auto; width:200px; }
+.product { background:#fff; width:200px; padding:15px; border-radius:10px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); }
+.product img { width:100%; height:160px; object-fit:cover; border-radius:8px; }
+.price { color:green; font-weight:bold; }
+.product button { background:var(--primary); color:#fff; border:none; width:100%; padding:8px; border-radius:5px; cursor:pointer; }
 
-/* PRODUCTS GRID */
-.container { padding:20px; }
-.products { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
-.product { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; }
-.product:hover { transform: translateY(-5px); box-shadow:0 5px 15px rgba(0,0,0,0.15); }
-.product img { width:100%; height:180px; object-fit:cover; border-radius:8px; }
-.product h3 { margin:10px 0; font-size:16px; color: var(--text-dark); }
-.price { color: green; font-weight:bold; margin-bottom:10px; }
-.product button { background: var(--primary); color:#fff; border:none; width:100%; padding:10px; border-radius:5px; cursor:pointer; }
-.product button:hover { background:#c6282e; }
-
-/* POPULAR CATEGORIES */
-.categories { display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap:15px; margin:30px 20px; }
-.category-card { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.1); transition: transform 0.3s; cursor:pointer; }
-.category-card:hover { transform: translateY(-5px); }
-.category-card img { width:60px; height:60px; margin-bottom:10px; object-fit:cover; border-radius:8px; }
-
-/* FOOTER */
-footer { background: var(--dark); color:#ccc; padding:25px 20px; text-align:center; }
-footer a { color:#fff; margin:0 5px; text-decoration:none; }
-footer a:hover { text-decoration: underline; }
-
-@media(max-width:768px){
-  .search-container { flex-direction: column; gap:5px; }
-  .search-container input, .search-container button { width:100%; border-radius:5px; }
-  .header-right { flex-direction: column; gap:8px; font-size:13px; }
-  nav { flex-wrap:wrap; padding:8px; }
-  .logo { font-size:24px; }
-}
+footer { background:var(--dark); color:#ccc; text-align:center; padding:25px; }
 </style>
 </head>
+
 <body>
 
 <header>
   <div class="header-top">
     <div class="logo">4uFinder</div>
     <div class="search-container">
-      <input type="text" placeholder="Search for anything">
+      <input placeholder="Search for anything">
       <button>🔍</button>
     </div>
     <div class="header-right">
       <div>Sign in</div>
       <div>Sell</div>
       <div onclick="location.href='products.html'">Shop</div>
-      <a href="product.html?id=1"><button>View Product</button></a>
     </div>
   </div>
+
   <nav>
     <a href="#">All Categories</a>
     <a href="#">Electronics</a>
@@ -110,44 +81,46 @@ footer a:hover { text-decoration: underline; }
   </nav>
 </header>
 
-<!-- HERO / TOP DEALS -->
 <section class="hero">
-  <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80" alt="Top Deals">
+  <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
   <div class="banner">🔥 Top Deals Today!</div>
 </section>
 
-<!-- POPULAR CATEGORIES -->
-<section class="categories">
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1510552776732-43f1e00c0b9e?auto=format&fit=crop&w=60&q=80"><p>Electronics</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1521335629791-ce4aec67dd8b?auto=format&fit=crop&w=60&q=80"><p>Fashion</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=60&q=80"><p>Home</p></div>
-  <div class="category-card"><img src="https://images.unsplash.com/photo-1580910051070-50f6f76847a6?auto=format&fit=crop&w=60&q=80"><p>Phones</p></div>
-</section>
+<h2 style="padding:20px">🔥 Featured Products</h2>
 
-<!-- FEATURED PRODUCTS SLIDER -->
-<div class="slider-container">
-  <h2 class="slider-title">🔥 Featured Products</h2>
-  <div class="slider" id="featuredSlider">
-    <div class="product"><img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"><h3>Smartphone Pro</h3><p class="price">$299</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&w=400&q=80"><h3>Wireless Headphones</h3><p class="price">$59</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa?auto=format&w=400&q=80"><h3>Smart Watch</h3><p class="price">$89</p><button onclick="addToCart()">Add to Cart</button></div>
-    <div class="product"><img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5?auto=format&w=400&q=80"><h3>Laptop 15"</h3><p class="price">$499</p><button onclick="addToCart()">Add to Cart</button></div>
+<div class="slider">
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
+    <h3>Smartphone Pro</h3>
+    <p class="price">$299</p>
+    <a href="product.html?id=1"><button>View Product</button></a>
+  </div>
+
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e">
+    <h3>Wireless Headphones</h3>
+    <p class="price">$59</p>
+    <a href="product.html?id=2"><button>View Product</button></a>
+  </div>
+
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa">
+    <h3>Smart Watch</h3>
+    <p class="price">$89</p>
+    <a href="product.html?id=3"><button>View Product</button></a>
+  </div>
+
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5">
+    <h3>Laptop 15"</h3>
+    <p class="price">$499</p>
+    <a href="product.html?id=4"><button>View Product</button></a>
   </div>
 </div>
 
 <footer>
   <p>© 2025 4uFinder Marketplace</p>
-  <p><a href="#">About</a> | <a href="#">Contact</a> | <a href="#">Privacy Policy</a></p>
 </footer>
 
-<script>
-let cart = 0;
-function addToCart(){ cart++; document.getElementById("cartCount").innerText = cart; }
-
-const slider = document.getElementById('featuredSlider');
-setInterval(() => { slider.scrollBy({ left: 220, behavior: 'smooth' }); }, 3000);
-</script>
 </body>
 </html>
-
-
