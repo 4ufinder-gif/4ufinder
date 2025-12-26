@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4uFinder | Cart</title>
+
+<style>
+:root {
+  --primary:#e53238;
+  --dark:#002f34;
+  --light:#f8f8f8;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:var(--light)}
+
+header{
+  background:#fff;
+  padding:15px 20px;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.logo{font-size:24px;font-weight:bold;color:var(--primary)}
+header a{text-decoration:none;color:#000;font-weight:bold}
+
+.container{
+  max-width:1000px;
+  margin:30px auto;
+  padding:20px;
+  background:#fff;
+  border-radius:10px;
+}
+
+h2{margin-bottom:20px}
+
+.cart-item{
+  display:grid;
+  grid-template-columns:80px 1fr 120px 120px 40px;
+  gap:15px;
+  align-items:center;
+  border-bottom:1px solid #eee;
+  padding:15px 0;
+}
+
+.cart-item img{
+  width:80px;
+  height:80px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.qty{
+  display:flex;
+  gap:5px;
+}
+.qty button{
+  padding:5px 10px;
+  cursor:pointer;
+}
+
+.remove{
+  color:red;
+  cursor:pointer;
+  font-size:18px;
+}
+
+.total-box{
+  margin-top:30px;
+  text-align:right;
+}
+.total-box h3{
+  margin-bottom:10px;
+}
+
+.checkout{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:12px 25px;
+  font-size:16px;
+  cursor:pointer;
+  border-radius:5px;
+}
+
+.empty{
+  text-align:center;
+  padding:40px;
+  color:#777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">4uFinder</div>
+  <a href="index.html">⬅ Continue Shopping</a>
+</header>
+
+<div class="container">
+  <h2>🛒 Your Cart</h2>
+
+  <div id="cartItems"></div>
+
+  <div class="total-box">
+    <h3>Total: $<span id="total">0</span></h3>
+    <button class="checkout">Proceed to Checkout</button>
+  </div>
+</div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+const cartItems = document.getElementById("cartItems");
+const totalEl = document.getElementById("total");
+
+function renderCart(){
+  cartItems.innerHTML = "";
+  let total = 0;
+
+  if(cart.length === 0){
+    cartItems.innerHTML = "<div class='empty'>Your cart is empty</div>";
+    totalEl.innerText = "0";
+    return;
+  }
+
+  cart.forEach((item,index)=>{
+    total += item.price * item.qty;
+
+    cartItems.innerHTML += `
+      <div class="cart-item">
+        <img src="${item.image}">
+        <div>
+          <strong>${item.name}</strong><br>
+          $${item.price}
+        </div>
+        <div class="qty">
+          <button onclick="changeQty(${index},-1)">-</button>
+          ${item.qty}
+          <button onclick="changeQty(${index},1)">+</button>
+        </div>
+        <div>$${item.price * item.qty}</div>
+        <div class="remove" onclick="removeItem(${index})">✖</div>
+      </div>
+    `;
+  });
+
+  totalEl.innerText = total;
+}
+
+function changeQty(i,delta){
+  cart[i].qty += delta;
+  if(cart[i].qty <= 0) cart.splice(i,1);
+  save();
+}
+
+function removeItem(i){
+  cart.splice(i,1);
+  save();
+}
+
+function save(){
+  localStorage.setItem("cart",JSON.stringify(cart));
+  renderCart();
+}
+
+renderCart();
+</script>
+
+</body>
+</html>
