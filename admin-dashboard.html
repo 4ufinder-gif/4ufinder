@@ -45,7 +45,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <button onclick="logout()">Logout</button>
 </header>
 
-<!-- DASHBOARD -->
 <section id="dashboard" class="active">
 <h2>📊 Dashboard</h2>
 <p>Quick overview of your store stats.</p>
@@ -56,7 +55,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 </ul>
 </section>
 
-<!-- WEBSITE SETTINGS -->
 <section id="websiteSettings">
 <h2>🌐 Website Settings</h2>
 <input placeholder="Website Name" id="websiteName">
@@ -65,7 +63,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <button onclick="saveWebsiteSettings()">Save Settings</button>
 </section>
 
-<!-- SHOP SETTINGS -->
 <section id="shopSettings">
 <h2>🏪 Shop Settings</h2>
 <input placeholder="Currency" id="currency">
@@ -74,7 +71,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <button onclick="saveShopSettings()">Save Settings</button>
 </section>
 
-<!-- PRODUCTS -->
 <section id="productsSection">
 <h2>🛠 Products</h2>
 <input type="hidden" id="id">
@@ -82,17 +78,16 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <input placeholder="Price" id="price">
 <input type="file" id="imageFile" accept="image/*" onchange="previewImage(event)">
 <img id="imagePreview" class="preview" src="">
-<input placeholder="Category" id="category">
+<input placeholder="Category ID" id="category">
 <button onclick="addProduct()">➕ Add / Update Product</button>
 <input type="text" placeholder="Search products..." id="productSearch" onkeyup="searchProducts()">
 
 <table>
-<thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Featured</th><th>Actions</th></tr></thead>
+<thead><tr><th>Name</th><th>Price</th><th>Category</th><th>Actions</th></tr></thead>
 <tbody id="products"></tbody>
 </table>
 </section>
 
-<!-- ORDERS -->
 <section id="ordersSection">
 <h2>🧾 Orders</h2>
 <table>
@@ -101,7 +96,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 </table>
 </section>
 
-<!-- SLIDERS -->
 <section id="slidersSection">
 <h2>🎞 Sliders</h2>
 <input placeholder="Slider Title" id="sliderTitle">
@@ -114,7 +108,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 </table>
 </section>
 
-<!-- SERVICES -->
 <section id="servicesSection">
 <h2>🛎 Services</h2>
 <input placeholder="Service Name" id="serviceName">
@@ -126,7 +119,6 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 </table>
 </section>
 
-<!-- CUSTOMERS -->
 <section id="customersSection">
 <h2>👥 Customers</h2>
 <table>
@@ -138,12 +130,10 @@ img.preview { max-width:100px; margin-top:5px; display:block; }
 <script>
 // ---------- CONFIG ----------
 const WP_SITE = "https://4ufinder.vercel.app";
-const WC_KEY = "ck_034ebc6c65e49e5c4ea89b315081047cecae777c";      // WooCommerce consumer key
-const WC_SECRET = "cs_c2e90ffd295a77ddf4462522a0d63577cc4afd65";   // WooCommerce consumer secret
+const WC_KEY = "ck_034ebc6c65e49e5c4ea89b315081047cecae777c";
+const WC_SECRET = "cs_c2e90ffd295a77ddf4462522a0d63577cc4afd65";
 
-function wcAuth(){
-    return 'Basic ' + btoa(WC_KEY + ':' + WC_SECRET);
-}
+function wcAuth(){ return 'Basic ' + btoa(WC_KEY + ':' + WC_SECRET); }
 
 // ---------- SECURITY ----------
 if(localStorage.getItem("admin")!=="true") location.href="admin-login.html";
@@ -156,82 +146,84 @@ document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'))
 document.getElementById(id).classList.add('active');
 document.querySelector(`nav button[onclick="showSection('${id}')"]`).classList.add('active');
 }
-
 function previewImage(e){ document.getElementById("imagePreview").src = URL.createObjectURL(e.target.files[0]); }
 function previewSliderImage(e){ document.getElementById("sliderPreview").src = URL.createObjectURL(e.target.files[0]); }
 
 // ---------- PRODUCTS ----------
-let productsData=[], featuredProducts=[];
+let productsData=[];
 async function loadProducts(){
-const res=await fetch(API_PRODUCTS);
-productsData=await res.json();
-renderProducts(productsData);
-updateDashboard();
+    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/products`, { headers: { "Authorization": wcAuth() } });
+    productsData = await res.json();
+    renderProducts(productsData);
+    updateDashboard();
 }
 function renderProducts(data){
-let html="";
-data.forEach(p=>{
-html+=`<tr>
-<td>${p.name}</td>
-<td>$${p.price}</td>
-<td>${p.category}</td>
-<td><button class="btn feature" onclick="toggleFeatured('${p.id}')">${featuredProducts.includes(p.id)?'★':'☆'}</button></td>
-<td>
-<button class="btn edit" onclick="editProduct('${p.id}','${p.name}','${p.price}','${p.image}','${p.category}')">Edit</button>
-<button class="btn delete" onclick="deleteProduct('${p.id}')">Delete</button>
-</td>
-</tr>`;
-});
-document.getElementById("products").innerHTML=html;
-}
-function searchProducts(){
-const term=document.getElementById("productSearch").value.toLowerCase();
-renderProducts(productsData.filter(p=>p.name.toLowerCase().includes(term)||p.category.toLowerCase().includes(term)));
+    let html="";
+    data.forEach(p=>{
+        html+=`<tr>
+            <td>${p.name}</td>
+            <td>$${p.price}</td>
+            <td>${p.categories.map(c=>c.name).join(", ")}</td>
+            <td>
+                <button class="btn edit" onclick="editProduct(${p.id},'${p.name}','${p.price}','${p.images[0]?.src || ''}',${p.categories[0]?.id || ''})">Edit</button>
+                <button class="btn delete" onclick="deleteProduct(${p.id})">Delete</button>
+            </td>
+        </tr>`;
+    });
+    document.getElementById("products").innerHTML = html;
 }
 async function addProduct(){
-const idEl=document.getElementById("id");
-const nameEl=document.getElementById("name");
-const priceEl=document.getElementById("price");
-const categoryEl=document.getElementById("category");
-const imageEl=document.getElementById("imageFile");
-let imageURL=imageEl.dataset.old||"";
-if(imageEl.files[0]){
-const formData=new FormData();
-formData.append("file",imageEl.files[0]);
-formData.append("upload_preset",UPLOAD_PRESET);
-const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData});
-const imgData=await res.json();
-imageURL=imgData.secure_url;
-}
-if(!nameEl.value||!priceEl.value||!categoryEl.value){alert("Fill all fields"); return;}
-const product={id:idEl.value||Date.now(),name:nameEl.value,price:priceEl.value,image:imageURL,category:categoryEl.value};
-const method=idEl.value?"PUT":"POST";
-const url=idEl.value?`${API_PRODUCTS}/id/${idEl.value}`:API_PRODUCTS;
-await fetch(url,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify({data:product})});
-alert("✅ Product saved!");
-idEl.value=""; nameEl.value=""; priceEl.value=""; categoryEl.value=""; imageEl.value=""; imageEl.dataset.old=""; document.getElementById("imagePreview").src="";
-loadProducts();
+    const id = document.getElementById("id").value;
+    const name = document.getElementById("name").value;
+    const price = document.getElementById("price").value;
+    const category = document.getElementById("category").value;
+    const file = document.getElementById("imageFile").files[0];
+    let imageURL = "";
+
+    if(file){
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("title", name);
+        const res = await fetch(`${WP_SITE}/wp-json/wp/v2/media`, { method:"POST", body:formData, headers:{"Authorization": wcAuth()} });
+        const imgData = await res.json();
+        imageURL = imgData.source_url;
+    }
+
+    const productData = {
+        name,
+        type: "simple",
+        regular_price: price,
+        categories: [{id: category}],
+        images: imageURL ? [{src:imageURL}] : []
+    };
+
+    const method = id ? "PUT" : "POST";
+    const url = id ? `${WP_SITE}/wp-json/wc/v3/products/${id}` : `${WP_SITE}/wp-json/wc/v3/products`;
+
+    await fetch(url, { method, headers:{"Authorization": wcAuth(),"Content-Type":"application/json"}, body:JSON.stringify(productData) });
+    alert("✅ Product saved!");
+    loadProducts();
 }
 function editProduct(id,name,price,image,category){
-document.getElementById("id").value=id;
-document.getElementById("name").value=name;
-document.getElementById("price").value=price;
-document.getElementById("category").value=category;
-document.getElementById("imageFile").dataset.old=image;
-document.getElementById("imagePreview").src=image;
+    document.getElementById("id").value=id;
+    document.getElementById("name").value=name;
+    document.getElementById("price").value=price;
+    document.getElementById("category").value=category;
+    document.getElementById("imagePreview").src=image;
 }
-function deleteProduct(id){ if(confirm("Are you sure?")) fetch(`${API_PRODUCTS}/id/${id}`,{method:"DELETE"}).then(()=>{alert("✅ Deleted"); loadProducts();}); }
-function toggleFeatured(id){ if(featuredProducts.includes(id)) featuredProducts=featuredProducts.filter(f=>f!==id); else featuredProducts.push(id); renderProducts(productsData); }
+async function deleteProduct(id){
+    if(!confirm("Are you sure?")) return;
+    await fetch(`${WP_SITE}/wp-json/wc/v3/products/${id}?force=true`, { method:"DELETE", headers:{ "Authorization": wcAuth() } });
+    loadProducts();
+}
 
-// Orders
-async function loadOrders() {
-    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/orders`, {
-        headers: { "Authorization": wcAuth() }
-    });
+// ---------- ORDERS ----------
+async function loadOrders(){
+    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/orders`, { headers:{"Authorization": wcAuth()} });
     const orders = await res.json();
-    let html = "";
-    orders.forEach(o => {
-        html += `<tr>
+    let html="";
+    orders.forEach(o=>{
+        html+=`<tr>
             <td>${o.id}</td>
             <td>${o.billing.first_name} ${o.billing.last_name}</td>
             <td>${o.line_items.map(li=>li.name).join(", ")}</td>
@@ -240,73 +232,46 @@ async function loadOrders() {
             <td><button class="btn delete" onclick="deleteOrder(${o.id})">Delete</button></td>
         </tr>`;
     });
-    document.getElementById("ordersList").innerHTML = html;
+    document.getElementById("ordersList").innerHTML=html;
 }
-
-// Delete Order
 async function deleteOrder(id){
     if(!confirm("Are you sure?")) return;
-    await fetch(`${WP_SITE}/wp-json/wc/v3/orders/${id}?force=true`, {
-        method:"DELETE",
-        headers: { "Authorization": wcAuth() }
-    });
+    await fetch(`${WP_SITE}/wp-json/wc/v3/orders/${id}?force=true`, { method:"DELETE", headers:{ "Authorization": wcAuth() } });
     loadOrders();
 }
 
-// Customers
-async function loadCustomers() {
-    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/customers`, {
-        headers: { "Authorization": wcAuth() }
-    });
+// ---------- CUSTOMERS ----------
+async function loadCustomers(){
+    const res = await fetch(`${WP_SITE}/wp-json/wc/v3/customers`, { headers:{ "Authorization": wcAuth() } });
     const customers = await res.json();
-    let html = "";
-    customers.forEach(c => {
-        html += `<tr>
+    let html="";
+    customers.forEach(c=>{
+        html+=`<tr>
             <td>${c.first_name} ${c.last_name}</td>
             <td>${c.email}</td>
             <td>${c.date_created}</td>
             <td><button class="btn delete" onclick="deleteCustomer(${c.id})">Delete</button></td>
         </tr>`;
     });
-    document.getElementById("customersList").innerHTML = html;
+    document.getElementById("customersList").innerHTML=html;
+}
+async function deleteCustomer(id){
+    if(!confirm("Are you sure?")) return;
+    await fetch(`${WP_SITE}/wp-json/wc/v3/customers/${id}?force=true`, { method:"DELETE", headers:{ "Authorization": wcAuth() } });
+    loadCustomers();
 }
 
-// ---------- SLIDERS ----------
-let slidersData=[];
-async function loadSliders(){ const res=await fetch(API_SLIDERS); slidersData=await res.json(); renderSliders(); }
-function renderSliders(){ let html=""; slidersData.forEach(s=>{ html+=`<tr><td>${s.title}</td><td><img src="${s.image}" width="80"></td><td><button class="btn delete" onclick="deleteSlider('${s.id}')">Delete</button></td></tr>`; }); document.getElementById("sliderList").innerHTML=html; }
-async function addSlider(){ const title=document.getElementById("sliderTitle").value; const imageFile=document.getElementById("sliderImage"); let imageURL=""; if(imageFile.files[0]){ const formData=new FormData(); formData.append("file",imageFile.files[0]); formData.append("upload_preset",UPLOAD_PRESET); const res=await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,{method:"POST",body:formData}); const imgData=await res.json(); imageURL=imgData.secure_url; } if(!title||!imageURL){alert("Fill all fields"); return;} const slider={id:Date.now(),title,image:imageURL}; await fetch(API_SLIDERS,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:slider})}); alert("✅ Slider added"); document.getElementById("sliderTitle").value=""; document.getElementById("sliderImage").value=""; document.getElementById("sliderPreview").src=""; loadSliders(); }
-async function deleteSlider(id){ if(confirm("Are you sure?")) await fetch(`${API_SLIDERS}/id/${id}`,{method:"DELETE"}).then(loadSliders); }
-
-// ---------- SERVICES ----------
-let servicesData=[];
-async function loadServices(){ const res=await fetch(API_SERVICES); servicesData=await res.json(); renderServices(); }
-function renderServices(){ let html=""; servicesData.forEach(s=>{ html+=`<tr><td>${s.name}</td><td>${s.description}</td><td><button class="btn delete" onclick="deleteService('${s.id}')">Delete</button></td></tr>`; }); document.getElementById("serviceList").innerHTML=html; }
-async function addService(){ const name=document.getElementById("serviceName").value; const desc=document.getElementById("serviceDescription").value; if(!name||!desc){alert("Fill all fields"); return;} const service={id:Date.now(),name,description:desc}; await fetch(API_SERVICES,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({data:service})}); alert("✅ Service added"); document.getElementById("serviceName").value=""; document.getElementById("serviceDescription").value=""; loadServices(); }
-async function deleteService(id){ if(confirm("Are you sure?")) await fetch(`${API_SERVICES}/id/${id}`,{method:"DELETE"}).then(loadServices); }
-
-// ---------- CUSTOMERS ----------
-async function loadCustomers(){ const res=await fetch(API_CUSTOMERS); const customers=await res.json(); let html=""; customers.forEach(c=>{ html+=`<tr><td>${c.name}</td><td>${c.email}</td><td>${c.registeredDate||'N/A'}</td><td><button class="btn delete" onclick="deleteCustomer('${c.id}')">Delete</button></td></tr>`; }); document.getElementById("customersList").innerHTML=html; updateDashboard(); }
-async function deleteCustomer(id){ if(confirm("Are you sure?")) await fetch(`${API_CUSTOMERS}/id/${id}`,{method:"DELETE"}).then(loadCustomers); }
-
-// ---------- SETTINGS ----------
-function saveWebsiteSettings(){ alert("✅ Website settings saved (implement API)"); }
-function saveShopSettings(){ alert("✅ Shop settings saved (implement API)"); }
-
-// ---------- DASHBOARD COUNTERS ----------
+// ---------- DASHBOARD ----------
 function updateDashboard(){
-document.getElementById("totalProducts").innerText=`Products: ${productsData.length}`;
-document.getElementById("totalOrders").innerText=`Orders: ${document.getElementById("ordersList").rows.length}`;
-document.getElementById("totalCustomers").innerText=`Customers: ${document.getElementById("customersList").rows.length}`;
+    document.getElementById("totalProducts").innerText=`Products: ${productsData.length}`;
+    document.getElementById("totalOrders").innerText=`Orders: ${document.getElementById("ordersList").rows.length}`;
+    document.getElementById("totalCustomers").innerText=`Customers: ${document.getElementById("customersList").rows.length}`;
 }
 
 // ---------- INITIAL LOAD ----------
 loadProducts();
 loadOrders();
-loadSliders();
-loadServices();
 loadCustomers();
 </script>
-
 </body>
 </html>
