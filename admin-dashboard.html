@@ -178,6 +178,17 @@ async function loadProducts() {
 
   document.getElementById("products").innerHTML = html;
 }
+function editProduct(id,name,price,image,category){
+  document.getElementById("id").value = id;
+  document.getElementById("name").value = name;
+  document.getElementById("price").value = price;
+  document.getElementById("category").value = category;
+
+  // store old image if admin doesn't upload new one
+  document.getElementById("imageFile").dataset.old = image;
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
 
 
 // ---------------- FEATURED ----------------
