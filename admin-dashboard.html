@@ -2,153 +2,44 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>4uFinder Admin Panel</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body{margin:0;font-family:Arial;background:#f4f4f4;display:flex}
-nav{width:230px;background:#222;color:#fff;height:100vh;padding:20px}
-nav h2{color:#ff9900}
-nav button{width:100%;padding:12px;margin:6px 0;border:none;background:#ff9900;color:#fff;font-weight:bold;border-radius:5px;cursor:pointer;text-align:left}
-nav button.active{background:#ffcc66;color:#000}
-main{flex:1;padding:20px;overflow:auto}
-section{display:none}
-section.active{display:block}
-table{width:100%;border-collapse:collapse}
-th,td{border:1px solid #ccc;padding:8px}
-.btn{padding:6px 10px;border:none;border-radius:4px;cursor:pointer}
-.feature{background:#ff9800;color:#fff}
-</style>
+<title>4uFinder Admin Dashboard</title>
+<link rel="stylesheet" href="css/admin.css">
 </head>
-
 <body>
-
-<nav>
-<h2>4uFinder Admin</h2>
-<button class="active" onclick="show('dashboard')">Dashboard</button>
-<button onclick="show('products')">Products</button>
-<button onclick="show('orders')">Orders</button>
-<button onclick="show('customers')">Customers</button>
-</nav>
+<header>
+  <h1>4uFinder Admin Dashboard</h1>
+  <nav>
+    <button onclick="showSection('products')">Products</button>
+    <button onclick="showSection('orders')">Orders</button>
+    <button onclick="showSection('sliders')">Sliders</button>
+    <button onclick="showSection('homepage')">Homepage Images</button>
+  </nav>
+</header>
 
 <main>
+  <section id="products" class="admin-section">
+    <h2>Products</h2>
+    <button onclick="showAddProductForm()">Add Product</button>
+    <div id="productsList"></div>
+  </section>
 
-<section id="dashboard" class="active">
-<h2>📊 Dashboard</h2>
-<p id="stats"></p>
-</section>
+  <section id="orders" class="admin-section" style="display:none;">
+    <h2>Orders</h2>
+    <div id="ordersList"></div>
+  </section>
 
-<section id="products">
-<h2>🛒 Products</h2>
-<table>
-<thead>
-<tr><th>Name</th><th>Price</th><th>Featured</th></tr>
-</thead>
-<tbody id="productsList"></tbody>
-</table>
-</section>
+  <section id="sliders" class="admin-section" style="display:none;">
+    <h2>Homepage Sliders</h2>
+    <div id="slidersList"></div>
+  </section>
 
-<section id="orders">
-<h2>📦 Orders</h2>
-<table>
-<thead><tr><th>ID</th><th>Total</th><th>Status</th></tr></thead>
-<tbody id="ordersList"></tbody>
-</table>
-</section>
-
-<section id="customers">
-<h2>👤 Customers</h2>
-<table>
-<thead><tr><th>Name</th><th>Email</th></tr></thead>
-<tbody id="customersList"></tbody>
-</table>
-</section>
-
+  <section id="homepage" class="admin-section" style="display:none;">
+    <h2>Homepage Images</h2>
+    <div id="homepageImagesList"></div>
+  </section>
 </main>
 
-<script>
-const WP_SITE = "http://4ufinder.local/";
-const WC_KEY = "ck_db6152c70a4b79e2c3465e765d7024b9dc0a44fb";
-const WC_SECRET = "cs_0f012406b5de42669ebdcdedc824c877714719e4";
-
-function auth(){
- return "Basic " + btoa(WC_KEY + ":" + WC_SECRET);
-}
-
-function show(id){
- document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
- document.getElementById(id).classList.add("active");
- document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
- event.target.classList.add("active");
-}
-
-/* PRODUCTS */
-async function loadProducts(){
- const r = await fetch(`${WP_SITE}/wp-json/wc/v3/products?per_page=20`,{
-  headers:{Authorization:auth()}
- });
- const data = await r.json();
- let html="";
- data.forEach(p=>{
-  html+=`
-   <tr>
-    <td>${p.name}</td>
-    <td>$${p.price}</td>
-    <td>
-     <button class="btn feature" onclick="toggleFeatured(${p.id},${p.featured})">
-      ${p.featured?"★":"☆"}
-     </button>
-    </td>
-   </tr>`;
- });
- document.getElementById("productsList").innerHTML=html;
- document.getElementById("stats").innerText=`Products: ${data.length}`;
-}
-
-async function toggleFeatured(id,current){
- await fetch(`${WP_SITE}/wp-json/wc/v3/products/${id}`,{
-  method:"PUT",
-  headers:{
-   Authorization:auth(),
-   "Content-Type":"application/json"
-  },
-  body:JSON.stringify({featured:!current})
- });
- loadProducts();
-}
-
-/* ORDERS */
-async function loadOrders(){
- const r = await fetch(`${WP_SITE}/wp-json/wc/v3/orders`,{
-  headers:{Authorization:auth()}
- });
- const data = await r.json();
- let html="";
- data.forEach(o=>{
-  html+=`<tr><td>${o.id}</td><td>$${o.total}</td><td>${o.status}</td></tr>`;
- });
- document.getElementById("ordersList").innerHTML=html;
-}
-
-/* CUSTOMERS */
-async function loadCustomers(){
- const r = await fetch(`${WP_SITE}/wp-json/wc/v3/customers`,{
-  headers:{Authorization:auth()}
- });
- const data = await r.json();
- let html="";
- data.forEach(c=>{
-  html+=`<tr><td>${c.first_name} ${c.last_name}</td><td>${c.email}</td></tr>`;
- });
- document.getElementById("customersList").innerHTML=html;
-}
-
-/* INIT */
-loadProducts();
-loadOrders();
-loadCustomers();
-</script>
-
+<script src="js/admin.js"></script>
 </body>
 </html>
-
