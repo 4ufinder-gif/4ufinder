@@ -1,5 +1,5 @@
 <?php
-$conn = new mysqli("http://4ufinder.vercel.app", "root", "", "4ufinder_store_db");
+$conn = new mysqli("https://4ufinder.vercel.app", "root", "", "4ufinder_store_db");
 
 $email = $_POST['email'];
 $password = $_POST['password'];
