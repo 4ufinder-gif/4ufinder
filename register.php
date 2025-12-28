@@ -1,30 +1,31 @@
-<?php
-$conn = new mysqli("http://4ufinder.vercel.app", "root", "", "4ufinder_store_db");
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-if ($conn->connect_error) {
-  die("Connection failed");
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
+
+$mail = new PHPMailer(true);
+
+try {
+  $mail->isSMTP();
+  $mail->Host = 'smtp.gmail.com';
+  $mail->SMTPAuth = true;
+  $mail->Username = 'yourgmail@gmail.com';
+  $mail->Password = 'APP_PASSWORD'; // Gmail App Password
+  $mail->SMTPSecure = 'tls';
+  $mail->Port = 587;
+
+  $mail->setFrom('4ufinder@gmail.com', '4ufinder Online Store');
+  $mail->addAddress($email);
+
+  $mail->isHTML(true);
+  $mail->Subject = 'Password Reset';
+  $mail->Body = "Click here to reset password:<br>
+  <a href='$link'>$link</a>";
+
+  $mail->send();
+  echo "Email sent successfully";
+} catch (Exception $e) {
+  echo "Mailer Error: " . $mail->ErrorInfo;
 }
-
-$fullname = $_POST['fullname'];
-$email = $_POST['email'];
-$password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-$code = md5(rand());
-
-$sql = "INSERT INTO users (fullname, email, password, verification_code)
-        VALUES ('$fullname', '$email', '$password', '$code')";
-
-if ($conn->query($sql)) {
-
-  $verifyLink = "http://4ufinder.vercel.app/store/verify.php?code=$code";
-
-  $subject = "Verify Your Email";
-  $message = "Click the link to verify your account:\n$verifyLink";
-  $headers = "From: no-reply@yourstore.com";
-
-  mail($email, $subject, $message, $headers);
-
-  echo "Registration successful! Check your email to verify.";
-} else {
-  echo "Email already exists!";
-}
-?>
