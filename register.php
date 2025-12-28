@@ -1,5 +1,5 @@
 <?php
-$conn = new mysqli("http://4ufinder.vercel.com", "root", "", "4ufinder_store_db");
+$conn = new mysqli("http://4ufinder.vercel.app", "root", "", "4ufinder_store_db");
 
 if ($conn->connect_error) {
   die("Connection failed");
@@ -15,7 +15,7 @@ $sql = "INSERT INTO users (fullname, email, password, verification_code)
 
 if ($conn->query($sql)) {
 
-  $verifyLink = "http://localhost/store/verify.php?code=$code";
+  $verifyLink = "http://4ufinder.vercel.app/store/verify.php?code=$code";
 
   $subject = "Verify Your Email";
   $message = "Click the link to verify your account:\n$verifyLink";
