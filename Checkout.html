@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Checkout</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  input, select, button { display: block; margin: 10px 0; padding: 8px; width: 300px; }
+</style>
+</head>
+<body>
+
+<h2>Checkout via WhatsApp</h2>
+
+<label for="customerName">Full Name:</label>
+<input type="text" id="customerName" placeholder="John Doe">
+
+<label for="product">Product:</label>
+<input type="text" id="product" placeholder="Product Name">
+
+<label for="quantity">Quantity:</label>
+<input type="number" id="quantity" placeholder="1" min="1">
+
+<label for="price">Price (USD):</label>
+<input type="number" id="price" placeholder="50" min="0">
+
+<label for="address">Delivery Address:</label>
+<input type="text" id="address" placeholder="123 Main Street">
+
+<button onclick="whatsappCheckout()">Checkout via WhatsApp</button>
+
+<script>
+function whatsappCheckout() {
+  const whatsappNumber = "265996040528"; // Malawi number with country code (no +)
+  const name = document.getElementById('customerName').value;
+  const product = document.getElementById('product').value;
+  const qty = document.getElementById('quantity').value;
+  const price = document.getElementById('price').value;
+  const address = document.getElementById('address').value;
+
+  if (!name || !product || !qty || !price || !address) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  const total = qty * price;
+
+  const message = `Hello, I want to place an order:
+
+Name: ${name}
+Product: ${product}
+Quantity: ${qty}
+Price per item: $${price}
+Total: $${total}
+Delivery Address: ${address}`;
+
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+</script>
+
+</body>
+</html>
