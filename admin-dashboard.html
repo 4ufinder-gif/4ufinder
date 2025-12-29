@@ -1,45 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>4uFinder Admin Dashboard</title>
-<link rel="stylesheet" href="css/admin.css">
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | 4uFinder</title>
 </head>
 <body>
-<header>
-  <h1>4uFinder Admin Dashboard</h1>
-  <nav>
-    <button onclick="showSection('products')">Products</button>
-    <button onclick="showSection('orders')">Orders</button>
-    <button onclick="showSection('sliders')">Sliders</button>
-    <button onclick="showSection('homepage')">Homepage Images</button>
-  </nav>
-</header>
+  <h2>Admin Dashboard</h2>
+  <a href="add-product.html">Add Product</a> | <a href="orders.html">View Orders</a> | <a href="../logout.html">Logout</a>
+  <h3>Products</h3>
+  <div id="products"></div>
 
-<main>
-  <section id="products" class="admin-section">
-    <h2>Products</h2>
-    <button onclick="showAddProductForm()">Add Product</button>
-    <div id="productsList"></div>
-  </section>
+  <script type="module">
+    import { onAuthChange, auth, logout, getProducts, deleteProduct } from '../firebase.js';
 
-  <section id="orders" class="admin-section" style="display:none;">
-    <h2>Orders</h2>
-    <div id="ordersList"></div>
-  </section>
+    onAuthChange(user=>{
+      if(!user) window.location.href = "../login.html";
+    });
 
-  <section id="sliders" class="admin-section" style="display:none;">
-    <h2>Homepage Sliders</h2>
-    <div id="slidersList"></div>
-  </section>
+    const productsDiv = document.getElementById("products");
 
-  <section id="homepage" class="admin-section" style="display:none;">
-    <h2>Homepage Images</h2>
-    <div id="homepageImagesList"></div>
-  </section>
-</main>
+    async function loadProducts(){
+      productsDiv.innerHTML = "";
+      const snapshot = await getProducts();
+      snapshot.forEach(doc=>{
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.innerHTML = `
+          <h4>${data.name} - $${data.price}</h4>
+          <p>${data.description}</p>
+          <img src="${data.imageURL}" width="100">
+          <button onclick="deleteProduct('${doc.id}').then(loadProducts)">Delete</button>
+          <hr>
+        `;
+        productsDiv.appendChild(div);
+      });
+    }
 
-<script src="js/admin.js"></script>
+    loadProducts();
+  </script>
 </body>
 </html>
