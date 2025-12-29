@@ -2,128 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Sign In | Online Store</title>
+  <title>Login | 4uFinder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      margin: 0;
-      background: #f4f6f8;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .login-box {
-      background: #ffffff;
-      padding: 30px;
-      width: 100%;
-      max-width: 380px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .login-box h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
-
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      border: none;
-      color: #fff;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .login-box button:hover {
-      background: #0056b3;
-    }
-
-    .links {
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .links a {
-      color: #007bff;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .links a:hover {
-      text-decoration: underline;
-    }
-  </style>
 </head>
-
 <body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="submit">Login</button>
+  </form>
+  <p>No account? <a href="register.html">Register</a></p>
 
-  <div class="login-box">
-    <h2>Sign In</h2>
-
-    <!-- ✅ UPDATED FORM -->
-    <form id="loginForm">
-      <input type="email" id="email" placeholder="Email Address" required>
-      <input type="password" id="password" placeholder="Password" required>
-      <button type="submit">Sign In</button>
-    </form>
-
-    <div class="links">
-      <a href="forgot.html">Forgot Password?</a>
-      <p>Don’t have an account? <a href="register.html">Sign Up</a></p>
-    </div>
-  </div>
-
-  <!-- ✅ FIREBASE AUTH SCRIPT -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { auth, login, onAuthChange } from './firebase.js';
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyC3CYovbEyBygGf4MzYFjF0Cekl0gPYYx0",
-      authDomain: "ufinder-2c8d7.firebaseapp.com",
-      projectId: "ufinder-2c8d7",
-      storageBucket: "ufinder-2c8d7.firebasestorage.app",
-      messagingSenderId: "985733321518",
-      appId: "1:985733321518:web:655ab1ed233024ef9ca0bf"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      signInWiaTFuUN4KvlORpjGHSQKVB61NCM12thEmailAndPassword(auth, email, password)
-        .then(() => {
-          window.location.href = "admin.html";
-        })
-        .catch((error) => {
-          alert(error.message);
-        });
+    onAuthChange(user => {
+      if(user) window.location.href = "admin/index.html";
     });
+
+    document.getElementById("loginForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const email = e.target.email.value;
+      const password = e.target.password.value;
+
+      try{
+        await login(email, password);
+        window.location.href = "admin/index.html";
+      } catch(err){
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>
+
   </script>
 
 </body>
