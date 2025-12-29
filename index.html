@@ -138,123 +138,68 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
 
 <!-- 🔹 Firebase Config & Scripts -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, collection, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC3CYovbEyBygGf4MzYFjF0Cekl0gPYYx0",
-    authDomain: "ufinder-2c8d7.firebaseapp.com",
-    projectId: "ufinder-2c8d7",
-    appId: "1:985733321518:web:655ab1ed233024ef9ca0bf"
-  };
+// 🔹 Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyC3CYovbEyBygGf4MzYFjF0Cekl0gPYYx0",
+  authDomain: "ufinder-2c8d7.firebaseapp.com",
+  projectId: "ufinder-2c8d7",
+  appId: "1:985733321518:web:655ab1ed233024ef9ca0bf"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  const headerLinks = document.getElementById("headerLinks");
-  const productSlider = document.getElementById("productSlider");
+const headerLinks = document.getElementById("headerLinks");
+const productSlider = document.getElementById("productSlider");
 
-  // 🔹 Show/hide Sell button based on login
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Replace Sign in with user email and keep Sell
-      headerLinks.innerHTML = `
-        <span>Hi, ${user.email}</span>
-        <a href="sell.html">Sell</a>
-        <a href="products.html">Shop</a>
-        <a href="cart.html">🛒 Cart</a>
-        <a href="#" id="logoutBtn">Logout</a>
-      `;
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        auth.signOut().then(() => location.reload());
-      });
-    }
-  });
-
-  // 🔹 Load products from Firestore dynamically
-  async function loadProducts() {
-    const querySnapshot = await getDocs(collection(db, "products"));
-    productSlider.innerHTML = ""; // clear slider
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      productSlider.innerHTML += `
-        <div class="product">
-          <img src="${data.image || 'https://via.placeholder.com/200'}" alt="${data.name}">
-          <h3>${data.name}</h3>
-          <p class="price">$${data.price}</p>
-          <a href="product.html?id=${doc.id}"><button>View Product</button></a>
-        </div>
-        <div id="products"></div>
-
-<script type="module">
-  const productsContainer = document.getElementById("products");
-
-  async function loadProducts() {
-    const snapshot = await getDocs(collection(db, "products"));
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <h3>${data.name}</h3>
-        <p>${data.description}</p>
-        <p>$${data.price}</p>
-        <img src="${data.imageURL}" width="150" />
-        <button onclick="buyProduct('${doc.id}', '${data.name}', ${data.price})">Buy</button>
-      `;
-      productsContainer.appendChild(div);
+// 🔹 Show/hide Sell button based on login
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    headerLinks.innerHTML = `
+      <span>Hi, ${user.email}</span>
+      <a href="sell.html">Sell</a>
+      <a href="products.html">Shop</a>
+      <a href="cart.html">🛒 Cart</a>
+      <a href="#" id="logoutBtn">Logout</a>
+    `;
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      auth.signOut().then(() => location.reload());
     });
   }
-
-  loadProducts();
-</script>
-
-      `;
-    });
-  }
-<h2>4uFinder Store</h2>
-<div id="products"></div>
-
-<script type="module">
-import { onAuthChange, auth, getProducts, addOrder } from '../firebase.js';
-
-onAuthChange(user=>{
-  if(!user) window.location.href = "../login.html";
 });
 
-const productsDiv = document.getElementById("products");
-
-async function loadProducts(){
-  const snapshot = await getProducts();
-  snapshot.forEach(doc=>{
+// 🔹 Load products dynamically from Firestore
+async function loadProducts() {
+  const querySnapshot = await getDocs(collection(db, "products"));
+  productSlider.innerHTML = "";
+  querySnapshot.forEach((doc) => {
     const data = doc.data();
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <h3>${data.name}</h3>
-      <p>${data.description}</p>
-      <p>$${data.price}</p>
-      <img src="${data.imageURL}" width="150">
-      <button onclick="buy('${doc.id}','${data.name}',${data.price})">Buy</button>
-      <hr>
+    productSlider.innerHTML += `
+      <div class="product">
+        <img src="${data.image || 'https://via.placeholder.com/200'}" alt="${data.name}">
+        <h3>${data.name}</h3>
+        <p class="price">$${data.price}</p>
+        <button onclick="buyProduct('${data.name}', ${data.price})">Buy via WhatsApp</button>
+      </div>
     `;
-    productsDiv.appendChild(div);
   });
 }
 
-window.buy = async (id, name, price)=>{
-  const user = auth.currentUser;
-  await addOrder({userEmail: user.email, products:[{id,name,price}], total: price});
-  alert("Order placed!");
-};
+// 🔹 WhatsApp checkout
+function buyProduct(name, price) {
+  const phone = "0996040628";
+  const message = `Hello, I want to buy: ${name} for $${price}`;
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
 
 loadProducts();
 </script>
 
-  loadProducts();
-</script>
-
 </body>
 </html>
-
-
