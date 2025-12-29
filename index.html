@@ -213,10 +213,48 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
       `;
     });
   }
+<h2>4uFinder Store</h2>
+<div id="products"></div>
+
+<script type="module">
+import { onAuthChange, auth, getProducts, addOrder } from '../firebase.js';
+
+onAuthChange(user=>{
+  if(!user) window.location.href = "../login.html";
+});
+
+const productsDiv = document.getElementById("products");
+
+async function loadProducts(){
+  const snapshot = await getProducts();
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <h3>${data.name}</h3>
+      <p>${data.description}</p>
+      <p>$${data.price}</p>
+      <img src="${data.imageURL}" width="150">
+      <button onclick="buy('${doc.id}','${data.name}',${data.price})">Buy</button>
+      <hr>
+    `;
+    productsDiv.appendChild(div);
+  });
+}
+
+window.buy = async (id, name, price)=>{
+  const user = auth.currentUser;
+  await addOrder({userEmail: user.email, products:[{id,name,price}], total: price});
+  alert("Order placed!");
+};
+
+loadProducts();
+</script>
 
   loadProducts();
 </script>
 
 </body>
 </html>
+
 
