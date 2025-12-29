@@ -1,42 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin Dashboard | 4uFinder</title>
-</head>
-<body>
-  <h2>Admin Dashboard</h2>
-  <a href="add-product.html">Add Product</a> | <a href="orders.html">View Orders</a> | <a href="../logout.html">Logout</a>
-  <h3>Products</h3>
-  <div id="products"></div>
+<div id="products"></div>
 
-  <script type="module">
-    import { onAuthChange, auth, logout, getProducts, deleteProduct } from '../firebase.js';
+<script type="module">
+import { onAuthChange, auth, getProducts, deleteProduct, updateProduct } from '../firebase.js';
 
-    onAuthChange(user=>{
-      if(!user) window.location.href = "../login.html";
-    });
+onAuthChange(user=>{
+  if(!user) window.location.href = "../login.html";
+});
 
-    const productsDiv = document.getElementById("products");
+const productsDiv = document.getElementById("products");
 
-    async function loadProducts(){
-      productsDiv.innerHTML = "";
-      const snapshot = await getProducts();
-      snapshot.forEach(doc=>{
-        const data = doc.data();
-        const div = document.createElement("div");
-        div.innerHTML = `
-          <h4>${data.name} - $${data.price}</h4>
-          <p>${data.description}</p>
-          <img src="${data.imageURL}" width="100">
-          <button onclick="deleteProduct('${doc.id}').then(loadProducts)">Delete</button>
-          <hr>
-        `;
-        productsDiv.appendChild(div);
-      });
-    }
+async function loadProducts(){
+  productsDiv.innerHTML = "";
+  const snapshot = await getProducts();
+  
+  snapshot.forEach(doc=>{
+    const data = doc.data();
+    const div = document.createElement("div");
+    
+    div.innerHTML = `
+      <h4>${data.name} - $${data.price}</h4>
+      <p>${data.description}</p>
+      <img src="${data.imageURL}" width="100">
+      <button onclick="editProduct('${doc.id}', '${data.name}', '${data.description}', ${data.price}, '${data.imageURL}')">Edit</button>
+      <button onclick="deleteProduct('${doc.id}').then(loadProducts)">Delete</button>
+      <hr>
+    `;
+    
+    productsDiv.appendChild(div);
+  });
+}
 
+window.editProduct = (id, name, description, price, imageURL) => {
+  const newName = prompt("Product Name:", name);
+  if(!newName) return;
+
+  const newDesc = prompt("Description:", description);
+  if(newDesc === null) return;
+
+  const newPrice = prompt("Price:", price);
+  if(!newPrice) return;
+
+  const newImage = prompt("Image URL:", imageURL);
+  if(!newImage) return;
+
+  updateProduct(id, {
+    name: newName,
+    description: newDesc,
+    price: parseFloat(newPrice),
+    imageURL: newImage
+  }).then(()=>{
+    alert("Product updated!");
     loadProducts();
-  </script>
-</body>
-</html>
+  }).catch(err=>alert(err.message));
+};
+
+loadProducts();
+</script>
