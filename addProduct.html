@@ -1,34 +1,33 @@
+<h2>Add Product</h2>
 <form id="productForm">
-  <input type="text" id="name" placeholder="Product Name" required>
+  <input type="text" id="name" placeholder="Name" required>
   <input type="text" id="description" placeholder="Description" required>
   <input type="number" id="price" placeholder="Price" required>
   <input type="text" id="imageURL" placeholder="Image URL" required>
   <button type="submit">Add Product</button>
 </form>
+<a href="index.html">Back to Dashboard</a>
 
 <script type="module">
-  const productForm = document.getElementById("productForm");
+import { onAuthChange, addProduct } from '../firebase.js';
 
-  productForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+onAuthChange(user=>{
+  if(!user) window.location.href = "../login.html";
+});
 
-    const name = document.getElementById("name").value;
-    const description = document.getElementById("description").value;
-    const price = parseFloat(document.getElementById("price").value);
-    const imageURL = document.getElementById("imageURL").value;
+document.getElementById("productForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const name = e.target.name.value;
+  const description = e.target.description.value;
+  const price = parseFloat(e.target.price.value);
+  const imageURL = e.target.imageURL.value;
 
-    try {
-      await addDoc(collection(db, "products"), {
-        name,
-        description,
-        price,
-        imageURL,
-        timestamp: Timestamp.now()
-      });
-      alert("Product added!");
-      productForm.reset();
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
-  });
+  try{
+    await addProduct({name, description, price, imageURL});
+    alert("Product added!");
+    e.target.reset();
+  } catch(err){
+    alert(err.message);
+  }
+});
 </script>
