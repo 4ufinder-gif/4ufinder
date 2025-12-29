@@ -103,7 +103,7 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
       <button>🔍</button>
     </div>
 
-    <div class="header-right">
+    <div class="header-right" id="headerLinks">
       <a href="login.html">Sign in</a>
       <a href="sell.html">Sell</a>
       <a href="products.html">Shop</a>
@@ -130,41 +130,68 @@ footer{background:var(--dark);color:#ccc;text-align:center;padding:25px}
 
 <h2 style="padding:20px">🔥 Featured Products</h2>
 
-<div class="slider">
-
-  <div class="product">
-    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9" alt="Smartphone">
-    <h3>Smartphone Pro</h3>
-    <p class="price">$299</p>
-    <a href="product.html?id=1"><button>View Product</button></a>
-  </div>
-
-  <div class="product">
-    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e" alt="Headphones">
-    <h3>Wireless Headphones</h3>
-    <p class="price">$59</p>
-    <a href="product.html?id=2"><button>View Product</button></a>
-  </div>
-
-  <div class="product">
-    <img src="https://images.unsplash.com/photo-1585386959984-a4155223f6fa" alt="Smart Watch">
-    <h3>Smart Watch</h3>
-    <p class="price">$89</p>
-    <a href="product.html?id=3"><button>View Product</button></a>
-  </div>
-
-  <div class="product">
-    <img src="https://images.unsplash.com/photo-1593642634367-d91a135587b5" alt="Laptop">
-    <h3>Laptop 15"</h3>
-    <p class="price">$499</p>
-    <a href="product.html?id=4"><button>View Product</button></a>
-  </div>
-
-</div>
+<div class="slider" id="productSlider"></div>
 
 <footer>
   <p>© 2025 4uFinder Marketplace</p>
 </footer>
+
+<!-- 🔹 Firebase Config & Scripts -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, collection, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3CYovbEyBygGf4MzYFjF0Cekl0gPYYx0",
+    authDomain: "ufinder-2c8d7.firebaseapp.com",
+    projectId: "ufinder-2c8d7",
+    appId: "1:985733321518:web:655ab1ed233024ef9ca0bf"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const headerLinks = document.getElementById("headerLinks");
+  const productSlider = document.getElementById("productSlider");
+
+  // 🔹 Show/hide Sell button based on login
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Replace Sign in with user email and keep Sell
+      headerLinks.innerHTML = `
+        <span>Hi, ${user.email}</span>
+        <a href="sell.html">Sell</a>
+        <a href="products.html">Shop</a>
+        <a href="cart.html">🛒 Cart</a>
+        <a href="#" id="logoutBtn">Logout</a>
+      `;
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        auth.signOut().then(() => location.reload());
+      });
+    }
+  });
+
+  // 🔹 Load products from Firestore dynamically
+  async function loadProducts() {
+    const querySnapshot = await getDocs(collection(db, "products"));
+    productSlider.innerHTML = ""; // clear slider
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      productSlider.innerHTML += `
+        <div class="product">
+          <img src="${data.image || 'https://via.placeholder.com/200'}" alt="${data.name}">
+          <h3>${data.name}</h3>
+          <p class="price">$${data.price}</p>
+          <a href="product.html?id=${doc.id}"><button>View Product</button></a>
+        </div>
+      `;
+    });
+  }
+
+  loadProducts();
+</script>
 
 </body>
 </html>
