@@ -1,0 +1,33 @@
+<h2>Add Product</h2>
+<form id="productForm">
+  <input type="text" id="name" placeholder="Name" required>
+  <input type="text" id="description" placeholder="Description" required>
+  <input type="number" id="price" placeholder="Price" required>
+  <input type="text" id="imageURL" placeholder="Image URL" required>
+  <button type="submit">Add Product</button>
+</form>
+<a href="index.html">Back to Dashboard</a>
+
+<script type="module">
+import { onAuthChange, addProduct } from '../firebase.js';
+
+onAuthChange(user=>{
+  if(!user) window.location.href = "../login.html";
+});
+
+document.getElementById("productForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const name = e.target.name.value;
+  const description = e.target.description.value;
+  const price = parseFloat(e.target.price.value);
+  const imageURL = e.target.imageURL.value;
+
+  try{
+    await addProduct({name, description, price, imageURL});
+    alert("Product added!");
+    e.target.reset();
+  } catch(err){
+    alert(err.message);
+  }
+});
+</script>
