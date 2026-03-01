@@ -1,58 +1,245 @@
-<div id="products"></div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+
+<style>
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f0f2f5;
+}
+
+/* TOP BAR */
+.topbar{
+  height:50px;
+  background:#23282d;
+  color:white;
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  font-size:18px;
+}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;
+  background:#2c3338;
+  height:100vh;
+  position:fixed;
+  top:50px;
+  left:0;
+  padding-top:20px;
+}
+
+.sidebar a{
+  display:block;
+  padding:12px 20px;
+  color:#eee;
+  text-decoration:none;
+}
+
+.sidebar a:hover{
+  background:#0073aa;
+}
+
+/* MAIN CONTENT */
+.main{
+  margin-left:220px;
+  margin-top:50px;
+  padding:20px;
+}
+
+.card{
+  background:white;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:6px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+input, textarea{
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+}
+
+button{
+  padding:8px 12px;
+  background:#0073aa;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#005177;
+}
+
+.product{
+  border-bottom:1px solid #ddd;
+  padding:10px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  My Website Admin
+</div>
+
+<div class="sidebar">
+  <a href="#" onclick="showSection('dashboard')">Dashboard</a>
+  <a href="#" onclick="showSection('products')">Products</a>
+  <a href="#" onclick="showSection('categories')">Categories</a>
+  <a href="#" onclick="showSection('homepage')">Homepage</a>
+</div>
+
+<div class="main">
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="section">
+    <div class="card">
+      <h2>Welcome Admin</h2>
+      <p>This looks like WordPress admin panel.</p>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="products" class="section" style="display:none;">
+    <div class="card">
+      <h2>Add Product</h2>
+      <input type="text" id="name" placeholder="Product Name">
+      <textarea id="description" placeholder="Description"></textarea>
+      <input type="number" id="price" placeholder="Price">
+      <input type="text" id="imageURL" placeholder="Image URL">
+      <button onclick="addProduct()">Add Product</button>
+    </div>
+
+    <div class="card">
+      <h2>All Products</h2>
+      <div id="productList"></div>
+    </div>
+  </div>
+
+  <!-- CATEGORIES -->
+  <div id="categories" class="section" style="display:none;">
+    <div class="card">
+      <h2>Add Category</h2>
+      <input type="text" id="categoryName" placeholder="Category Name">
+      <button onclick="addCategory()">Add Category</button>
+      <div id="categoryList"></div>
+    </div>
+  </div>
+
+  <!-- HOMEPAGE EDITOR -->
+  <div id="homepage" class="section" style="display:none;">
+    <div class="card">
+      <h2>Edit Homepage</h2>
+      <textarea id="homepageContent" rows="6"></textarea>
+      <button onclick="saveHomepage()">Save Homepage</button>
+    </div>
+  </div>
+
+</div>
 
 <script type="module">
-import { onAuthChange, auth, getProducts, deleteProduct, updateProduct } from '../firebase.js';
+import { 
+  onAuthChange, 
+  getProducts, 
+  addProductFirebase,
+  deleteProduct, 
+  updateProduct,
+  getCategories,
+  addCategoryFirebase,
+  saveHomepageFirebase,
+  getHomepage
+} from '../firebase.js';
 
 onAuthChange(user=>{
   if(!user) window.location.href = "../login.html";
 });
 
-const productsDiv = document.getElementById("products");
+function showSection(id){
+  document.querySelectorAll(".section").forEach(sec=>{
+    sec.style.display="none";
+  });
+  document.getElementById(id).style.display="block";
+}
+window.showSection = showSection;
+
+/* PRODUCTS */
+const productList = document.getElementById("productList");
 
 async function loadProducts(){
-  productsDiv.innerHTML = "";
+  productList.innerHTML="";
   const snapshot = await getProducts();
-  
+
   snapshot.forEach(doc=>{
     const data = doc.data();
     const div = document.createElement("div");
-    
-    div.innerHTML = `
-      <h4>${data.name} - $${data.price}</h4>
-      <p>${data.description}</p>
-      <img src="${data.imageURL}" width="100">
-      <button onclick="editProduct('${doc.id}', '${data.name}', '${data.description}', ${data.price}, '${data.imageURL}')">Edit</button>
+    div.className="product";
+    div.innerHTML=`
+      <strong>${data.name}</strong> - $${data.price}
+      <br>${data.description}
+      <br><img src="${data.imageURL}" width="80">
+      <br>
       <button onclick="deleteProduct('${doc.id}').then(loadProducts)">Delete</button>
       <hr>
     `;
-    
-    productsDiv.appendChild(div);
+    productList.appendChild(div);
   });
 }
+loadProducts();
 
-window.editProduct = (id, name, description, price, imageURL) => {
-  const newName = prompt("Product Name:", name);
-  if(!newName) return;
+window.addProduct = async ()=>{
+  const name = document.getElementById("name").value;
+  const description = document.getElementById("description").value;
+  const price = parseFloat(document.getElementById("price").value);
+  const imageURL = document.getElementById("imageURL").value;
 
-  const newDesc = prompt("Description:", description);
-  if(newDesc === null) return;
-
-  const newPrice = prompt("Price:", price);
-  if(!newPrice) return;
-
-  const newImage = prompt("Image URL:", imageURL);
-  if(!newImage) return;
-
-  updateProduct(id, {
-    name: newName,
-    description: newDesc,
-    price: parseFloat(newPrice),
-    imageURL: newImage
-  }).then(()=>{
-    alert("Product updated!");
-    loadProducts();
-  }).catch(err=>alert(err.message));
+  await addProductFirebase({name, description, price, imageURL});
+  alert("Product Added");
+  loadProducts();
 };
 
-loadProducts();
+/* CATEGORIES */
+const categoryList = document.getElementById("categoryList");
+
+async function loadCategories(){
+  categoryList.innerHTML="";
+  const snapshot = await getCategories();
+
+  snapshot.forEach(doc=>{
+    const div=document.createElement("div");
+    div.innerHTML=doc.data().name;
+    categoryList.appendChild(div);
+  });
+}
+loadCategories();
+
+window.addCategory = async ()=>{
+  const name = document.getElementById("categoryName").value;
+  await addCategoryFirebase({name});
+  alert("Category Added");
+  loadCategories();
+};
+
+/* HOMEPAGE */
+window.saveHomepage = async ()=>{
+  const content=document.getElementById("homepageContent").value;
+  await saveHomepageFirebase({content});
+  alert("Homepage Saved");
+};
+
+async function loadHomepage(){
+  const data=await getHomepage();
+  document.getElementById("homepageContent").value=data?.content || "";
+}
+loadHomepage();
+
 </script>
+
+</body>
+</html>
