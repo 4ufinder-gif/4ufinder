@@ -2,27 +2,31 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard</title>
+<title>CMS Admin</title>
+
+<!-- TinyMCE -->
+<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+
+<!-- SortableJS -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
 body{
   margin:0;
-  font-family: Arial, sans-serif;
-  background:#f0f2f5;
+  font-family:Arial;
+  background:#f1f1f1;
 }
 
-/* TOP BAR */
 .topbar{
   height:50px;
   background:#23282d;
   color:white;
   display:flex;
   align-items:center;
+  justify-content:space-between;
   padding:0 20px;
-  font-size:18px;
 }
 
-/* SIDEBAR */
 .sidebar{
   width:220px;
   background:#2c3338;
@@ -44,7 +48,6 @@ body{
   background:#0073aa;
 }
 
-/* MAIN CONTENT */
 .main{
   margin-left:220px;
   margin-top:50px;
@@ -56,13 +59,6 @@ body{
   padding:20px;
   margin-bottom:20px;
   border-radius:6px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-
-input, textarea{
-  width:100%;
-  padding:8px;
-  margin:5px 0;
 }
 
 button{
@@ -77,165 +73,263 @@ button:hover{
   background:#005177;
 }
 
-.product{
-  border-bottom:1px solid #ddd;
-  padding:10px 0;
+input, textarea{
+  width:100%;
+  padding:8px;
+  margin:5px 0;
+}
+
+.modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:white;
+  padding:20px;
+  width:400px;
+  border-radius:8px;
+}
+
+.dark{
+  background:#1e1e1e;
+  color:white;
+}
+
+.dark .card{
+  background:#2b2b2b;
+  color:white;
+}
+
+.block{
+  padding:10px;
+  background:#ddd;
+  margin:5px 0;
+  cursor:move;
 }
 </style>
 </head>
 <body>
 
 <div class="topbar">
-  My Website Admin
+  <div>My CMS Admin</div>
+  <button onclick="toggleDark()">🌙</button>
 </div>
 
 <div class="sidebar">
-  <a href="#" onclick="showSection('dashboard')">Dashboard</a>
-  <a href="#" onclick="showSection('products')">Products</a>
-  <a href="#" onclick="showSection('categories')">Categories</a>
-  <a href="#" onclick="showSection('homepage')">Homepage</a>
+  <a onclick="showSection('dashboard')">Dashboard</a>
+  <a onclick="showSection('products')">Products</a>
+  <a onclick="showSection('categories')">Categories</a>
+  <a onclick="showSection('homepage')">Homepage</a>
 </div>
 
 <div class="main">
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="section">
-    <div class="card">
-      <h2>Welcome Admin</h2>
-      <p>This looks like WordPress admin panel.</p>
-    </div>
+<!-- DASHBOARD -->
+<div id="dashboard" class="section">
+  <div class="card">
+    <h2>Welcome Admin</h2>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="section" style="display:none;">
+  <div class="card">
+    <h2>Add Product</h2>
+    <input type="text" id="name" placeholder="Product Name">
+    <textarea id="description" placeholder="Description"></textarea>
+    <input type="number" id="price" placeholder="Price">
+    <input type="file" id="image">
+    <button onclick="addProduct()">Add Product</button>
   </div>
 
-  <!-- PRODUCTS -->
-  <div id="products" class="section" style="display:none;">
-    <div class="card">
-      <h2>Add Product</h2>
-      <input type="text" id="name" placeholder="Product Name">
-      <textarea id="description" placeholder="Description"></textarea>
-      <input type="number" id="price" placeholder="Price">
-      <input type="text" id="imageURL" placeholder="Image URL">
-      <button onclick="addProduct()">Add Product</button>
-    </div>
+  <div class="card">
+    <h2>All Products</h2>
+    <div id="productList"></div>
+  </div>
+</div>
 
-    <div class="card">
-      <h2>All Products</h2>
-      <div id="productList"></div>
-    </div>
+<!-- CATEGORIES -->
+<div id="categories" class="section" style="display:none;">
+  <div class="card">
+    <h2>Add Category</h2>
+    <input type="text" id="categoryName">
+    <button onclick="addCategory()">Add</button>
+    <div id="categoryList"></div>
+  </div>
+</div>
+
+<!-- HOMEPAGE -->
+<div id="homepage" class="section" style="display:none;">
+  <div class="card">
+    <h2>Homepage Editor</h2>
+    <textarea id="homepageContent"></textarea>
+    <button onclick="saveHomepage()">Save</button>
   </div>
 
-  <!-- CATEGORIES -->
-  <div id="categories" class="section" style="display:none;">
-    <div class="card">
-      <h2>Add Category</h2>
-      <input type="text" id="categoryName" placeholder="Category Name">
-      <button onclick="addCategory()">Add Category</button>
-      <div id="categoryList"></div>
+  <div class="card">
+    <h2>Drag & Drop Page Builder</h2>
+    <div id="pageBuilder">
+      <div class="block">Hero Section</div>
+      <div class="block">Services Section</div>
+      <div class="block">Testimonials</div>
     </div>
   </div>
-
-  <!-- HOMEPAGE EDITOR -->
-  <div id="homepage" class="section" style="display:none;">
-    <div class="card">
-      <h2>Edit Homepage</h2>
-      <textarea id="homepageContent" rows="6"></textarea>
-      <button onclick="saveHomepage()">Save Homepage</button>
-    </div>
-  </div>
+</div>
 
 </div>
 
+<!-- EDIT MODAL -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <h3>Edit Product</h3>
+    <input type="text" id="editName">
+    <textarea id="editDescription"></textarea>
+    <input type="number" id="editPrice">
+    <button onclick="saveEdit()">Save</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
 <script type="module">
+
 import { 
-  onAuthChange, 
-  getProducts, 
+  onAuthChange,
+  getProducts,
   addProductFirebase,
-  deleteProduct, 
+  deleteProduct,
   updateProduct,
   getCategories,
   addCategoryFirebase,
+  uploadImage,
   saveHomepageFirebase,
-  getHomepage
+  getHomepage,
+  getUserRole
 } from '../firebase.js';
 
-onAuthChange(user=>{
-  if(!user) window.location.href = "../login.html";
+onAuthChange(async user=>{
+  if(!user) window.location.href="../login.html";
+
+  const role = await getUserRole(user.uid);
+  if(role !== "admin"){
+    alert("Access Denied");
+    window.location.href="/";
+  }
 });
 
-function showSection(id){
-  document.querySelectorAll(".section").forEach(sec=>{
-    sec.style.display="none";
-  });
+/* TinyMCE */
+tinymce.init({
+  selector:'#homepageContent',
+  height:300
+});
+
+/* Drag & Drop */
+new Sortable(document.getElementById("pageBuilder"), {
+  animation:150
+});
+
+window.showSection = (id)=>{
+  document.querySelectorAll(".section").forEach(s=>s.style.display="none");
   document.getElementById(id).style.display="block";
-}
-window.showSection = showSection;
+};
+
+window.toggleDark = ()=>{
+  document.body.classList.toggle("dark");
+};
 
 /* PRODUCTS */
+
 const productList = document.getElementById("productList");
+let editingId = null;
 
 async function loadProducts(){
   productList.innerHTML="";
   const snapshot = await getProducts();
-
   snapshot.forEach(doc=>{
     const data = doc.data();
-    const div = document.createElement("div");
-    div.className="product";
-    div.innerHTML=`
-      <strong>${data.name}</strong> - $${data.price}
-      <br>${data.description}
-      <br><img src="${data.imageURL}" width="80">
-      <br>
-      <button onclick="deleteProduct('${doc.id}').then(loadProducts)">Delete</button>
-      <hr>
+    productList.innerHTML += `
+      <div>
+        <strong>${data.name}</strong> - $${data.price}
+        <br><img src="${data.imageURL}" width="80">
+        <br>
+        <button onclick='openEdit("${doc.id}", ${JSON.stringify(data)})'>Edit</button>
+        <button onclick='deleteProduct("${doc.id}").then(loadProducts)'>Delete</button>
+        <hr>
+      </div>
     `;
-    productList.appendChild(div);
   });
 }
 loadProducts();
 
 window.addProduct = async ()=>{
-  const name = document.getElementById("name").value;
-  const description = document.getElementById("description").value;
-  const price = parseFloat(document.getElementById("price").value);
-  const imageURL = document.getElementById("imageURL").value;
+  const file = document.getElementById("image").files[0];
+  const imageURL = await uploadImage(file);
 
-  await addProductFirebase({name, description, price, imageURL});
-  alert("Product Added");
+  await addProductFirebase({
+    name: name.value,
+    description: description.value,
+    price: parseFloat(price.value),
+    imageURL
+  });
+
+  loadProducts();
+};
+
+window.openEdit = (id,data)=>{
+  editingId=id;
+  editName.value=data.name;
+  editDescription.value=data.description;
+  editPrice.value=data.price;
+  editModal.style.display="flex";
+};
+
+window.closeModal=()=>{
+  editModal.style.display="none";
+};
+
+window.saveEdit=async()=>{
+  await updateProduct(editingId,{
+    name:editName.value,
+    description:editDescription.value,
+    price:parseFloat(editPrice.value)
+  });
+  closeModal();
   loadProducts();
 };
 
 /* CATEGORIES */
-const categoryList = document.getElementById("categoryList");
 
 async function loadCategories(){
+  const snapshot=await getCategories();
   categoryList.innerHTML="";
-  const snapshot = await getCategories();
-
   snapshot.forEach(doc=>{
-    const div=document.createElement("div");
-    div.innerHTML=doc.data().name;
-    categoryList.appendChild(div);
+    categoryList.innerHTML+=`<div>${doc.data().name}</div>`;
   });
 }
 loadCategories();
 
-window.addCategory = async ()=>{
-  const name = document.getElementById("categoryName").value;
-  await addCategoryFirebase({name});
-  alert("Category Added");
+window.addCategory=async()=>{
+  await addCategoryFirebase({name:categoryName.value});
   loadCategories();
 };
 
 /* HOMEPAGE */
-window.saveHomepage = async ()=>{
-  const content=document.getElementById("homepageContent").value;
+
+window.saveHomepage=async()=>{
+  const content=tinymce.get("homepageContent").getContent();
   await saveHomepageFirebase({content});
-  alert("Homepage Saved");
 };
 
 async function loadHomepage(){
   const data=await getHomepage();
-  document.getElementById("homepageContent").value=data?.content || "";
+  if(data) tinymce.get("homepageContent").setContent(data.content);
 }
 loadHomepage();
 
